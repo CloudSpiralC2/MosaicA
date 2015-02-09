@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="utf-8">
+		<title>MosaicA</title>
+	</head>
+
+	<body>
+		<center>
+			<p><img id="topImg" src="image/MosaicATitle.png" alt="タイトル"></p>
+
+			モザイクアートに変換する画像を選んでね!!<br><br>
+			<input id="selectButton" type="file" accept="image/*"><br>
+			<input id="send" type="button" value="送信">
+			<div id="base64">ここに選択した画像のbase64が表示されるはず</div>
+			<div id="selectedImg">ここに選択した画像が表示されるはず</div>
+		</center>
+
+		<!-- 最後にスクリプト読み込み -->
+		<script src="js/jquery-2.1.1.min.js"></script>
+		<script src="js/index.js"></script>
+	</body>
+
+</html>

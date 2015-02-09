@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+	<head>
+		<meta charset="utf-8">
+		<title>welcome</title>
+	</head>
+
+	<body>
+		<table>
+			<tr>
+				<td>学籍番号</td>
+				<td>2014008</td>
+			</tr
+			<tr>
+				<td>氏名</td>
+				<td>冨田幸佑</td>
+			</tr>
+		</table>
+
+		<!-- 最後にスクリプト読み込み -->
+		<script src="js/jquery-2.1.1.min.js"></script>
+	</body>
+
+</html>
