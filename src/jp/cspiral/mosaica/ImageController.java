@@ -6,19 +6,13 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
 import jp.cspiral.mosaica.util.DBUtils;
-
-import org.jsoup.HttpStatusException;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -267,10 +261,10 @@ public class ImageController {
 				Base64.decode(mime));
 
 		// サーバー上に保存
-		String dirname = "/usr/share/tomcat7/webapps/images/";
+		String dirname = "/usr/share/tomcat8/webapps/MosaicA/images/";
 		String filename = "preParentImage.jpg";
 		File file = new File(dirname + filename);
-		System.out.println(filename);
+		//System.out.println(filename);
 
 		BufferedImage inputImage = ImageIO.read(input);
 		ImageIO.write(inputImage, "jpg", file);

@@ -53,12 +53,12 @@ public class GoogleController {
 		ChildImage childImage = new ChildImage();
 
 		// サーバー上に保存
-		String dirname = "/usr/share/tomcat7/webapps/images/";
+		String dirname = "/usr/share/tomcat8/webapps/images/";
 		String filename = new Date().getTime() + ".jpg";
 		File file = new File(dirname + filename);
 		//System.out.println(filename);
 		ImageIO.write(originalImage, "jpeg", file);
-		String url = "http://ec2-54-64-173-140.ap-northeast-1.compute.amazonaws.com:8080/images/"
+		String url = "http://ec2-54-64-107-107.ap-northeast-1.compute.amazonaws.com:8080/images/"
 				+ filename;
 
 		String resultImageUrl = sendGoogleByUrl(url, keyword);

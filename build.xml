@@ -13,7 +13,7 @@
 	<property name="webcontent" value="webcontent" />
 
 	<!-- ステージング環境の設定 -->
-	<property name="ssh.server"         value="ec2-54-64-173-140.ap-northeast-1.compute.amazonaws.com" />
+	<property name="ssh.server"         value="ec2-54-65-107-107.ap-northeast-1.compute.amazonaws.com" />
 	<property name="ssh.user"           value="ec2-user" />
 	<property name="ssh.pass"           value="" />
 	<property name="ssh.key"            value="C:/pbl/ssh_key/c2-key.pem" />
@@ -77,7 +77,7 @@
 	<!-- ステージング環境へデプロイ -->
 	<target name="deploy.to.tomcat.staging">
 		<scp file="MosaicA.war"
-			todir="${ssh.user}:${ssh.pass}@${ssh.server}:/usr/share/tomcat7/webapps/"
+			todir="${ssh.user}:${ssh.pass}@${ssh.server}:/usr/share/tomcat8/webapps/"
 			keyfile="${ssh.key}"
 			trust = "yes" />
 
