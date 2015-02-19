@@ -261,15 +261,13 @@ public class ImageController {
 				Base64.decode(mime));
 
 		// サーバー上に保存
-		//TODO imagesをmkdir + パーミッション変更する必要がある
-		String dirname = "/usr/share/tomcat8/webapps/images/";
+		String dirname = "/usr/share/tomcat7/webapps/images/";
 		String filename = "preParentImage.jpg";
 		File file = new File(dirname + filename);
-		//System.out.println(filename);
+		System.out.println(filename);
 
 		BufferedImage inputImage = ImageIO.read(input);
 		ImageIO.write(inputImage, "jpg", file);
-
 
 		BufferedImage image = ImageIO.read(file);
 

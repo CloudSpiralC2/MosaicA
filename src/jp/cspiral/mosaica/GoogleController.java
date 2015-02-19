@@ -53,7 +53,7 @@ public class GoogleController {
 		ChildImage childImage = new ChildImage();
 
 		// サーバー上に保存
-		String dirname = "/usr/share/tomcat8/webapps/images/";
+		String dirname = "/usr/share/tomcat7/webapps/images/";
 		String filename = new Date().getTime() + ".jpg";
 		File file = new File(dirname + filename);
 		//System.out.println(filename);
