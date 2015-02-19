@@ -1,4 +1,4 @@
-var endpoint = 'http://ec2-54-65-107-107.ap-northeast-1.compute.amazonaws.com:8080/MosaicA/api';
+var endpoint = 'http://ec2-54-92-0-242.ap-northeast-1.compute.amazonaws.com:8080/MosaicA/api';
 
 // 読み込み完了時処理
 $(function() {

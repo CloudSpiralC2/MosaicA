@@ -58,7 +58,7 @@ public class GoogleController {
 		File file = new File(dirname + filename);
 		//System.out.println(filename);
 		ImageIO.write(originalImage, "jpeg", file);
-		String url = "http://ec2-54-64-107-107.ap-northeast-1.compute.amazonaws.com:8080/images/"
+		String url = "http://ec2-54-92-0-242.ap-northeast-1.compute.amazonaws.com:8080/images/"
 				+ filename;
 
 		String resultImageUrl = sendGoogleByUrl(url, keyword);
