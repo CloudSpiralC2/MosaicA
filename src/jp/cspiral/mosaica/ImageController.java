@@ -59,12 +59,18 @@ public class ImageController {
 	 */
 	private DBCollection coll;
 
+	// ストリーム処理用 どこを処理しているかを特定する
+	private int position;
+
 	ImageController() {
 
 	}
 
 	public String createParentImage(String img, String keyword, int userDivX,
 			int userDivY) throws IOException, InterruptedException {
+		// 時間測定 開始時間
+		long start = System.currentTimeMillis();
+
 		try {
 			String status = new String("processing");
 
@@ -97,56 +103,54 @@ public class ImageController {
 			int height = (int)Math.ceil(sizeY / divY);
 			ChildImage[] children = new ChildImage[divX * divY];
 
-			int position = 0;
+			// 処理位置位置初期化
+			position = 0;
 			// stream処理結果入れる用
 			List<ChildImage> childrenlist = new ArrayList<>();
-			List<String> encodedString = new ArrayList<>();
 
 			// splitedImagesを配列に変換し，そのストリームを作成する
 			Stream<BufferedImage> stream = Arrays.stream(splitedImages);
 
-
-			System.out.println(splitedImages[0].getHeight());
 			System.out.println("before stream process");
-			System.out.println(stream.isParallel());
-			System.out.println(stream.count());
-//			stream.forEach(si -> encodedString.add(encode(si)));
+
+			// splitedImagesのstreamの各要素に対する類似画像検索の結果(ChildImage)でstreamを作成する
+			Stream<ChildImage> ciStream = stream.parallel().map(splitedImage -> {
+				String nameOfChildImage;
+				ChildImage child;
+
+				try {
+					// 画像を文字列にエンコード
+					nameOfChildImage = encode(splitedImage);
+					// childImageをnew = googleに投げる この時点ではchildはURLのみ持つ
+					child = googleController.sendGoogle(splitedImage, keyword);
+				} catch (IOException e) {
+					// TODO 自動生成された catch ブロック
+					e.printStackTrace();
+					return null;
+				}
+
+				// childの各要素をセット
+				child.setSrc(nameOfChildImage);
+				child.setY((position / divX) % divY);
+				child.setX(position % divX);
+
+				System.out.println("Current Position:" + (position / divX) % divY + ","+ (position % divX));
+
+				// 処理位置を進める stream外部の変数を更新するのはよろしくないらしいが…
+				position++;
+
+				return child;
+			});
+
+			// 順序通りにChildImageをリストに追加する
+			ciStream.forEachOrdered(child -> childrenlist.add(child));;
+
+			// streamを閉じる
+			ciStream.close();
 			stream.close();
 
-//			stream.map(splitedImage -> createChiqldImage(splitedImage, keyword, position, divX, divY))
-//			.forEachOrdered(child -> childrenlist.add(child));;
-
-
-			//children = (ChildImage[])childrenlist.toArray(new ChildImage[0]);
-
-
-			Integer[] array = {1,2,3,4,5,1,2,3,4,5};
-			System.out.println("----- filterメソッド -----");
-			Stream<Integer> stream1 = Arrays.stream(array);
-			// 要素を偶数のみに絞ります
-			Stream<Integer> filterStream = stream1.filter(value -> value%2 == 0);
-			filterStream.forEach(value -> System.out.println("filterStream: " + value));
-
-
-			for (int i = 0; i < divY; i++) {
-				for (int j = 0; j < divX; j++) {
-					// 画像を文字列にエンコード
-					System.out.println("before encode");
-					String nameOfChildImage = encode(splitedImages[i * divX + j]);
-					// childImageをnew = googleに投げる
-					System.out.println("before sendGoogle");
-					ChildImage child = googleController.sendGoogle(splitedImages[i * divX + j], keyword);
-					// childの各要素をセット
-					child.setSrc(nameOfChildImage);
-					child.setY(i);
-					child.setX(j);
-					// childrenのi番目要素にchildをセット
-					children[i * divX + j] = child;
-					System.out.println("Current Position:" + i + ","+ j);
-				}
-			}
-
-
+			// ArrayList -> 配列
+			children = (ChildImage[])childrenlist.toArray(new ChildImage[0]);
 
 			// 子イメージリストをparentImageに追加する
 			parentImage.setChildren(children);
@@ -182,41 +186,18 @@ public class ImageController {
 			// DBに保存
 			coll.insert(query);
 
+			// 時間測定 終了時間
+			long end = System.currentTimeMillis();
+			System.out.println("変換時間" + (end - start)  + "ms");
+
 			return parentImage.getImageId();
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-
-	public ChildImage createChildImage(BufferedImage splitedImage, String keyword, int position, int divX, int divY){
-		String nameOfChildImage;
-		ChildImage child;
-
-		System.out.println("Current Position:" + (position / divX) % divY + ","+ (position % divX));
-
-		try {
-			// 画像を文字列にエンコード
-			nameOfChildImage = encode(splitedImage);
-			// childImageをnew = googleに投げる この時点ではchildはURLのみ持つ
-			child = googleController.sendGoogle(splitedImage, keyword);
-		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-			return null;
-		}
-
-		// childの各要素をセット
-		child.setSrc(nameOfChildImage);
-		child.setY((position / divX) % divY);
-		child.setX(position % divX);
-
-		System.out.println("Current Position:" + (position / divX) % divY + ","+ (position % divX));
-
-		return child;
-	}
 
 	/**
 	 * 親イメージをx*yの子イメージ配列に分割する
@@ -302,15 +283,12 @@ public class ImageController {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		BufferedOutputStream os = new BufferedOutputStream(bos);
 		image.flush();
-		System.out.println("try");
 		try {
 			// osにimageを書き込み
 			ImageIO.write(image, "jpg", os);
-			System.out.println("write");
 			os.flush();
 			os.close();
 			// 文字列に変換
-			System.out.println("before change string");
 			String encodedImage = new String(Base64.encode(bos.toByteArray()),
 					"UTF-8");
 			System.out.println("encoded length: " + encodedImage.length());
@@ -320,9 +298,11 @@ public class ImageController {
 			sb.insert(0, "data:image/jpg;base64,");
 			return new String(sb);
 
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			return "";
+		} catch (ArrayIndexOutOfBoundsException e2){
+			return "Base64.encode error";
 		}
 
 	}
