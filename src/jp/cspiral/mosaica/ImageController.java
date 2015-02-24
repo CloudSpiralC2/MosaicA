@@ -113,17 +113,28 @@ public class ImageController {
 //			stream.forEach(si -> encodedString.add(encode(si)));
 			stream.close();
 
-//			stream.map(splitedImage -> createChildImage(splitedImage, keyword, position, divX, divY))
+//			stream.map(splitedImage -> createChiqldImage(splitedImage, keyword, position, divX, divY))
 //			.forEachOrdered(child -> childrenlist.add(child));;
 
 
 			//children = (ChildImage[])childrenlist.toArray(new ChildImage[0]);
 
+
+			Integer[] array = {1,2,3,4,5,1,2,3,4,5};
+			System.out.println("----- filterメソッド -----");
+			Stream<Integer> stream1 = Arrays.stream(array);
+			// 要素を偶数のみに絞ります
+			Stream<Integer> filterStream = stream1.filter(value -> value%2 == 0);
+			filterStream.forEach(value -> System.out.println("filterStream: " + value));
+
+
 			for (int i = 0; i < divY; i++) {
 				for (int j = 0; j < divX; j++) {
 					// 画像を文字列にエンコード
+					System.out.println("before encode");
 					String nameOfChildImage = encode(splitedImages[i * divX + j]);
 					// childImageをnew = googleに投げる
+					System.out.println("before sendGoogle");
 					ChildImage child = googleController.sendGoogle(splitedImages[i * divX + j], keyword);
 					// childの各要素をセット
 					child.setSrc(nameOfChildImage);
@@ -183,6 +194,8 @@ public class ImageController {
 	public ChildImage createChildImage(BufferedImage splitedImage, String keyword, int position, int divX, int divY){
 		String nameOfChildImage;
 		ChildImage child;
+
+		System.out.println("Current Position:" + (position / divX) % divY + ","+ (position % divX));
 
 		try {
 			// 画像を文字列にエンコード
@@ -289,11 +302,15 @@ public class ImageController {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		BufferedOutputStream os = new BufferedOutputStream(bos);
 		image.flush();
+		System.out.println("try");
 		try {
+			// osにimageを書き込み
 			ImageIO.write(image, "jpg", os);
+			System.out.println("write");
 			os.flush();
 			os.close();
 			// 文字列に変換
+			System.out.println("before change string");
 			String encodedImage = new String(Base64.encode(bos.toByteArray()),
 					"UTF-8");
 			System.out.println("encoded length: " + encodedImage.length());
@@ -303,7 +320,7 @@ public class ImageController {
 			sb.insert(0, "data:image/jpg;base64,");
 			return new String(sb);
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return "";
 		}
@@ -326,7 +343,7 @@ public class ImageController {
 				Base64.decode(mimeByte));
 
 		// サーバー上に保存
-		String dirname = "/usr/share/tomcat8/webapps/images/";
+		String dirname = "/usr/share/tomcat7/webapps/images/";
 		String filename = "preParentImage.jpg";
 		File file = new File(dirname + filename);
 		System.out.println(filename);
