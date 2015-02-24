@@ -1,5 +1,6 @@
 package jp.cspiral.mosaica;
 
+import java.util.List;
 import java.awt.image.BufferedImage;
 import java.awt.image.RasterFormatException;
 import java.io.BufferedOutputStream;
@@ -7,10 +8,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
+
+import org.glassfish.jersey.internal.util.Base64;
 
 import jp.cspiral.mosaica.util.DBUtils;
 
@@ -20,7 +26,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
-import com.sun.jersey.core.util.Base64;
 
 public class ImageController {
 	/**
@@ -92,6 +97,28 @@ public class ImageController {
 			int height = (int)Math.ceil(sizeY / divY);
 			ChildImage[] children = new ChildImage[divX * divY];
 
+			int position = 0;
+			// stream処理結果入れる用
+			List<ChildImage> childrenlist = new ArrayList<>();
+			List<String> encodedString = new ArrayList<>();
+
+			// splitedImagesを配列に変換し，そのストリームを作成する
+			Stream<BufferedImage> stream = Arrays.stream(splitedImages);
+
+
+			System.out.println(splitedImages[0].getHeight());
+			System.out.println("before stream process");
+			System.out.println(stream.isParallel());
+			System.out.println(stream.count());
+//			stream.forEach(si -> encodedString.add(encode(si)));
+			stream.close();
+
+//			stream.map(splitedImage -> createChildImage(splitedImage, keyword, position, divX, divY))
+//			.forEachOrdered(child -> childrenlist.add(child));;
+
+
+			//children = (ChildImage[])childrenlist.toArray(new ChildImage[0]);
+
 			for (int i = 0; i < divY; i++) {
 				for (int j = 0; j < divX; j++) {
 					// 画像を文字列にエンコード
@@ -107,6 +134,9 @@ public class ImageController {
 					System.out.println("Current Position:" + i + ","+ j);
 				}
 			}
+
+
+
 			// 子イメージリストをparentImageに追加する
 			parentImage.setChildren(children);
 
@@ -147,6 +177,32 @@ public class ImageController {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+
+	public ChildImage createChildImage(BufferedImage splitedImage, String keyword, int position, int divX, int divY){
+		String nameOfChildImage;
+		ChildImage child;
+
+		try {
+			// 画像を文字列にエンコード
+			nameOfChildImage = encode(splitedImage);
+			// childImageをnew = googleに投げる この時点ではchildはURLのみ持つ
+			child = googleController.sendGoogle(splitedImage, keyword);
+		} catch (IOException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+			return null;
+		}
+
+		// childの各要素をセット
+		child.setSrc(nameOfChildImage);
+		child.setY((position / divX) % divY);
+		child.setX(position % divX);
+
+		System.out.println("Current Position:" + (position / divX) % divY + ","+ (position % divX));
+
+		return child;
 	}
 
 	/**
@@ -228,22 +284,30 @@ public class ImageController {
 	 * @return MIMEエンコードされた文字列
 	 * @author niki
 	 */
-	public String encode(BufferedImage image) throws IOException {
+	public String encode(BufferedImage image){
 		// まずバイナリ表現に変換
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		BufferedOutputStream os = new BufferedOutputStream(bos);
 		image.flush();
-		ImageIO.write(image, "jpg", os); // 拡張子は一応jpgにしています．引数でセットするほうがいいかも？
-		os.flush();
-		os.close();
+		try {
+			ImageIO.write(image, "jpg", os);
+			os.flush();
+			os.close();
+			// 文字列に変換
+			String encodedImage = new String(Base64.encode(bos.toByteArray()),
+					"UTF-8");
+			System.out.println("encoded length: " + encodedImage.length());
+			StringBuilder sb = new StringBuilder();
+			sb.append(encodedImage);
+			 // 拡張子は一応jpgにしています．引数でセットするほうがいいかも？
+			sb.insert(0, "data:image/jpg;base64,");
+			return new String(sb);
 
-		// 文字列に変換
-		String encodedImage = new String(Base64.encode(bos.toByteArray()),
-				"UTF-8");
-		StringBuilder sb = new StringBuilder();
-		sb.append(encodedImage);
-		sb.insert(0, "data:image/jpg;base64,");
-		return new String(sb);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
+
 	}
 
 	/**
@@ -257,11 +321,12 @@ public class ImageController {
 	public BufferedImage decode(String mime) throws IOException {
 		//System.out.println("mime_orig:" + mime);
 		mime = mime.replaceAll("data:image/.*;base64,", "");// この文字列が先頭にくっついてるとダメみたいなので削除
+		byte[] mimeByte = mime.getBytes("UTF-8");
 		ByteArrayInputStream input = new ByteArrayInputStream(
-				Base64.decode(mime));
+				Base64.decode(mimeByte));
 
 		// サーバー上に保存
-		String dirname = "/usr/share/tomcat7/webapps/images/";
+		String dirname = "/usr/share/tomcat8/webapps/images/";
 		String filename = "preParentImage.jpg";
 		File file = new File(dirname + filename);
 		System.out.println(filename);
@@ -401,4 +466,31 @@ public class ImageController {
 
 		return this.encode( MergedImage );
 	}
+/*
+	 public static void main(String[] args){
+
+		Integer[] array = {1,2,3,4,5,1,2,3,4,5};
+		System.out.println("----- filterメソッド -----");
+		Stream<Integer> stream1 = Arrays.stream(array);
+		// 要素を偶数のみに絞ります
+		Stream<Integer> filterStream = stream1.filter(value -> value%2 == 0);
+		filterStream.forEach(value -> System.out.println("filterStream: " + value));
+		System.out.println("----- limitメソッド -----");
+		Stream<Integer> stream2 = Arrays.stream(array);
+		// 要素を最初から3要素までに絞ります
+		Stream<Integer> limitStream = stream2.limit(3);
+		limitStream.forEach(value -> System.out.println("limitStream: " + value));
+		System.out.println("----- distinctメソッド -----");
+		Stream<Integer> stream3 = Arrays.stream(array);
+		// 要素の重複をなくします
+		Stream<Integer> distinctStream = stream3.distinct();
+		distinctStream.forEach(value -> System.out.println("distinctStream: " + value));
+
+		   System.out.print("Javaバージョン(java.version):");
+		    System.out.println(System.getProperty("java.version"));
+
+		    System.out.print("オペレーティングシステム名(os.name):");
+		    System.out.println(System.getProperty("os.name"));
+	}
+*/
 }

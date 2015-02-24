@@ -10,7 +10,7 @@
 		<meta name="author" content="www.singlepage.guru">
 		<link rel="shortcut icon" href="favicon.ico">
 
-		<title>MosaicA index</title>
+		<title>MosaicA</title>
 
 		<link href='http://fonts.googleapis.com/css?family=Lato:300|Julius+Sans+One' rel='stylesheet' type='text/css'>
 		<link href='http://fonts.googleapis.com/css?family=Fascinate|Source+Sans+Pro|Dosis|Abel|Noto+Sans|Droid+Sans|Arvo|Cabin|New+Rocker|Lora|PT+Sans|PT+Sans+Narrow|Arimo|Oleo+Script|Ubuntu|Montserrat+Alternates|Bitter|PT+Serif|Lobster|Shadows+Into+Light|Rokkitt|Libre+Baskerville|Ubuntu+Condensed|Droid+Serif|Open+Sans|Roboto|Oswald|Open+Sans+Condensed:300|Roboto+Condensed|Montserrat|Raleway|Yanone+Kaffeesatz|Oxygen|Merriweather|Varela+Round|Francois+One|Roboto+Slab|Titillium+Web|Play|Nunito|Fjalla+One|Inconsolata|Indie+Flower|Pacifico|Hammersmith+One|Righteous|Black+Ops+One|Audiowide|Luckiest+Guy|Lobster+Two|Comfortaa|Orbitron|Carme|Allerta+Stencil|Keania+One|Alike|Rye|Sancreek|Megrim|Fruktur' rel='stylesheet' type='text/css'>
@@ -34,14 +34,18 @@
 					<div class="row lg-spacer-medium">
 						<h1 class="lg-hero-title">MosaicA</h1>
 						<hr class="lg-halfwidth">
+						<!--
 						<h1 class="">Easy to use</h1>
 						<h2 class="">Click on any text to edit it</h2>
 						<h2 class="">Pick a picture and download the template</h2>
+						-->
 					</div>
 				</div>
+				<!--
 				<div class="downarrow">
 					<a href="#scrolldown" class="text"><i class="fa fa-chevron-circle-down fa-4x"></i></a>
 				</div>
+				-->
 			</div>
 		</section>
 		<section>
@@ -54,16 +58,21 @@
 					<hr class="halfwidth">
 					<h2 class="">How to mosaiking</h2>
 					<p class="text-left">
-						Go write the procedure of mosaic processing in this column.
+						First, selectt the image you want to mosaicing.
+						Selection method are two types.
+						The first type is how to choose from a file.
+						The secont type is how to select the photos you took with the camera.
 					</p>
 					<p class="text-left">
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. In quis ultrices urna. Quisque aliquet aliquam blandit. Praesent convallis tempus ligula, ac consequat tortor sodales vel. Mauris feugiat diam id tortor fermentum pulvinar. Vestibulum eleifend felis a nunc varius bibendum. Nam fermentum velit in sapien pulvinar scelerisque. Suspendisse tincidunt dolor in tristique faucibus. Morbi rhoncus ligula tincidunt, eleifend nisl et, ornare diam.
+						Then, set the option of mosaicing.
+						Setting items are division number of horizontal, division number of vertical and keyword of the image to be used in mosaicing.
 					</p>
 					<p class="text-left">
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. In quis ultrices urna. Quisque aliquet aliquam blandit. Praesent convallis tempus ligula, ac consequat tortor sodales vel. Mauris feugiat diam id tortor fermentum pulvinar. Vestibulum eleifend felis a nunc varius bibendum. Nam fermentum velit in sapien pulvinar scelerisque. Suspendisse tincidunt dolor in tristique faucibus. Morbi rhoncus ligula tincidunt, eleifend nisl et, ornare diam.
+						Finally, please press the send button.
+						As soon as mosaicing is finished, the results are displayed at the bottom.
 					</p>
 					<p class="text-left">
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. In quis ultrices urna. Quisque aliquet aliquam blandit. Praesent convallis tempus ligula, ac consequat tortor sodales vel. Mauris feugiat diam id tortor fermentum pulvinar. Vestibulum eleifend felis a nunc varius bibendum. Nam fermentum velit in sapien pulvinar scelerisque. Suspendisse tincidunt dolor in tristique faucibus. Morbi rhoncus ligula tincidunt, eleifend nisl et, ornare diam.
+						So, enjoy the MosaicA!!
 					</p>
 				</div>
 			</div>
@@ -81,12 +90,9 @@
 					<div class="col-xs-12">
 						<div class="input-group lg-overflowfix">
 							<span class="input-group-btn">
-								<button class="btn btn-lg" id="selectFile"   onclick="alert('ファイル'); $('#selectCamera')[0].setAttribute('disabled', 'disabled'); $('#selectFile')[0].removeAttribute('disabled');" disabled>
-									<span class="lg-send">ファイルから</span><span class="lg-sending"><i class="fa fa-fw fa-spinner fa-spin"></i>&nbsp;Subscribing</span>
-								</button>
-								<button class="btn btn-lg" id="selectCamera" onclick="alert('カメラ');  $('#selectCamera')[0]removeAttribute('disabled');           $('#selectFile')[0].setAttribute('disabled', 'disabled');">
-									<span class="lg-send">カメラから</span><span class="lg-sending"><i class="fa fa-fw fa-spinner fa-spin"></i>&nbsp;Subscribing</span>
-								</button> </span>
+								<button class="btn btn-lg" id="fromFile"><span class="lg-send">From file</span><span class="lg-sending"><i class="fa fa-fw fa-spinner fa-spin"></i>Subscribing</span></button>
+								<button class="btn btn-lg" id="fromCamera"><span class="lg-send">From camera</span><span class="lg-sending"><i class="fa fa-fw fa-spinner fa-spin"></i>Subscribing</span></button>
+							</span>
 						</div>
 						<div class="lg-formsent col-xs-12 text-center">
 							<i class="fa fa-fw fa-check-square-o"></i>&nbsp;Subscription successful
@@ -96,11 +102,11 @@
 						</div>
 					</div>
 				</div>
+				<div id="imageSelectBtnSpace" align="center"></div>
+				<div id="selectImage" align="center"></div>
 			</div>
 		</section>
-		<section class="lg-paneldark ">
-			<div class="container-fluid text-center  maingraphic lg-minfullheight" style="background-image:url('./images/glide-arrows.png');"></div>
-		</section>
+		<section class="lg-paneldark"></section>
 		<section class="lg-panelthindark">
 			<hr class="lg-backgroundcolor lg-borderlight lg-lowerchevrondivider">
 			<div class="lg-backgroundcolor lg-chevrondividerdarkpost"></div>
@@ -112,17 +118,11 @@
 				</div>
 				<div class="row lg-spacer-bottom-medium">
 					<div class="col-xs-12">
-						<form method="post" name="subscribeform" onsubmit="return UserFormPost(this);" action="#" class="form-horizontal">
-							<input type="hidden" name="form_name" value="Subscription form">
-							横
-							<input type="number" name="number" class="form-control input-lg" required="required">
+							horizontal　:　<input id="divxForm" type="number" name="number" min="2">
 							<br>
-							縦
-							<input type="number" name="number" class="form-control input-lg" required="required">
+							vertical　　　:　<input id="divyForm" type="number" name="number" min="2">
 							<br>
-							キーワード
-							<input type="text" name="text" class="form-control input-lg" required="required">
-							<br>
+							keyword　　:　<input id="keyForm" type="text" name="text">
 							<div class="lg-formsent col-xs-12 text-center">
 								<i class="fa fa-fw fa-check-square-o"></i>&nbsp;Subscription successful
 							</div>
@@ -132,17 +132,28 @@
 						</form>
 					</div>
 				</div>
+			<button id="sendBtn">Send</button>
+			<br>
+			<br>
 			</div>
 
 			<hr class="halfwidth">
 			<section class="lg-paneldark ">
-				<div class="container-fluid text-center  maingraphic lg-minfullheight" style="background-image:url('./images/loading.gif');"></div>
-				<i class="fa fa-fw fa-spinner fa-spin"></i>
+				<div class="container-fluid text-center maingraphic">
+					<br>
+					<input id="imageid" type="text">
+					<button id="getimage">GetMosaicA</button>
+					<div id="mosaic" class="" style="line-height: 0px;position:relative;"></div>
+					<i id="loading" class="fa fa-4x fa-spinner fa-spin hide"></i>
+					<br>
+					<br>
+
+				</div>
+
+
 			</section>
 
-			<button class="btn btn-lg" id="selectFile" onclick="alert('save!!');">
-				<span class="lg-send">セーブ</span><span class="lg-sending"><i class="fa fa-fw fa-spinner fa-spin"></i>&nbsp;Subscribing</span>
-			</button>
+
 
 		</section>
 
@@ -170,13 +181,13 @@
 
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/skrollr/0.6.22/skrollr.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.11/jquery.scrollTo.min.js"></script>
-		<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
 		<script src="js/main.js"></script>
 		<script src="js/lgscroll.js"></script>
 
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
+		<script src="js/index_tmp.js"></script>
 		<script src="js/viewimage.js"></script>
 	</body>
 
