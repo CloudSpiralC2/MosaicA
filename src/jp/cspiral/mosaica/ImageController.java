@@ -407,4 +407,56 @@ public class ImageController {
 
 		return this.encode( MergedImage );
 	}
+
+	public boolean isMonoColor(String imageId) throws IOException, MongoException {
+		db = DBUtils.getInstance().getDb();
+		coll = db.getCollection(DB_COLLECTION);
+		DBObject query = new BasicDBObject("imageId", imageId);
+		DBObject result = coll.findOne(query);
+
+		boolean flag = false;
+		int split = 4;
+		int num = split * split * split;
+		int divX = (int) result.get("divX");
+		int divY = (int) result.get("divY");
+		int sizeX = (int) result.get("sizeX");
+		int sizeY = (int) result.get("sizeY");
+		int width = (int)Math.floor(sizeX / divX);
+		int height = (int)Math.floor(sizeY / divY);
+
+		// イメージの取得
+		BufferedImage image = new BufferedImage(width, // 生成する画像の横サイズ
+				height, // 生成する画像の縦サイズ
+				BufferedImage.TYPE_INT_RGB); // イメージタイプ(RGB:int)
+		image = this.decode( (String)query.get("src") );
+
+		// カラーヒストグラムの初期化
+		int[] histogram = new int[num];
+		for(int i=0; i<num; i++)
+			histogram[i] = 0;
+
+		// カラーヒストグラムの作成
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				// RGB値の取得
+				int color = image.getRGB(x, y);
+				int r = color >> 16 & 0xff;
+				int g = color >> 8 & 0xff;
+				int b = color & 0xff;
+				// ヒストグラム用インデックスの作成
+				int index = split*split*(r/num) + split*(g/num) + (b/num);
+
+				histogram[index] += 1;
+			}
+		}
+
+		// ヒストグラムの評価（単色かどうか）
+		for(int i=0; i<num; i++){
+			if(histogram[i] > width*height*0.95){
+				flag = true;
+				break;
+			}
+		}
+		return flag;
+	}
 }
