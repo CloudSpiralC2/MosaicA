@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -360,6 +361,8 @@ public class ImageController {
 	 * @param imageId
 	 * @return
 	 * @throws MongoException
+	 * @author hayata
+	 * @author niki
 	 */
 	public String saveImage(String imageId) throws IOException,
 			MongoException {
@@ -390,8 +393,10 @@ public class ImageController {
 			for (int j = 0; j < divX; j++) {
 				DBObject child = (DBObject) children.get("child" + Integer.toString(i*divX+j));
 
-				String ChildImageSrc = (String) child.get("src");
-				ChildImage = this.decode(ChildImageSrc);
+				//URLを取得しBufferedImageに変換
+				String ChildImageURL = (String) child.get("url");
+				URL u = new URL(ChildImageURL);
+				ChildImage = ImageIO.read(u);
 
 				// 保存用のイメージ作成．
 				// ChildImageの各ピクセルのRGB値をMergedImageの対応するピクセルに格納する.
