@@ -1,5 +1,6 @@
 package jp.cspiral.mosaica;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.RasterFormatException;
 import java.io.BufferedOutputStream;
@@ -383,9 +384,6 @@ public class ImageController {
 		BufferedImage MergedImage = new BufferedImage(width*divX, // 生成する画像の横サイズ
 				height*divY, // 生成する画像の縦サイズ
 				BufferedImage.TYPE_INT_RGB); // イメージタイプ(RGB:int)
-		BufferedImage ChildImage = new BufferedImage(width, // 生成する画像の横サイズ
-				height, // 生成する画像の縦サイズ
-				BufferedImage.TYPE_INT_RGB); // イメージタイプ(RGB:int)
 
 		DBObject children = (DBObject) result.get("children");
 
@@ -393,10 +391,19 @@ public class ImageController {
 			for (int j = 0; j < divX; j++) {
 				DBObject child = (DBObject) children.get("child" + Integer.toString(i*divX+j));
 
-				//URLを取得しBufferedImageに変換
+				//子画像のURLを取得しBufferedImageに変換
 				String ChildImageURL = (String) child.get("url");
-				URL u = new URL(ChildImageURL);
-				ChildImage = ImageIO.read(u);
+				BufferedImage ChildImage = ImageIO.read(new URL(ChildImageURL));
+				
+				//分割サイズに合うように子画像のサイズを変換
+				BufferedImage resizedChildImage = new BufferedImage(width, // 生成する画像の横サイズ
+						height, // 生成する画像の縦サイズ
+						BufferedImage.TYPE_INT_RGB); // イメージタイプ(RGB:int)
+				
+				//サイズ変換
+				resizedChildImage.getGraphics().drawImage(
+						ChildImage.getScaledInstance(width,height,Image.SCALE_AREA_AVERAGING), 
+						0, 0, width, height, null);
 
 				// 保存用のイメージ作成．
 				// ChildImageの各ピクセルのRGB値をMergedImageの対応するピクセルに格納する.
@@ -404,7 +411,7 @@ public class ImageController {
 					for (int y = 0; y < height; y++) {
 						MergedImage.setRGB(j * width + x, // ピクセルのx座標
 								i * height + y, // ピクセルのy座標
-								ChildImage.getRGB(x, y)); // ChildImageのRGB値
+								resizedChildImage.getRGB(x, y)); // ChildImageのRGB値
 					}
 				}
 			}
