@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>jp.cspiral</groupId>
 	<artifactId>MosaicA</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>war</packaging>
 	<name>MosaicA</name>
 
@@ -42,11 +42,6 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>${basedir}/src</sourceDirectory>
-		<testSourceDirectory>${basedir}/test</testSourceDirectory>
-		<outputDirectory>${basedir}/target/classes</outputDirectory>
-		<testOutputDirectory>${basedir}/target/test-classes</testOutputDirectory>
-		<directory>${basedir}/target</directory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
