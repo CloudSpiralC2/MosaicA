@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet</artifactId>
-			<version>2.5.1</version>
+			<version>2.7</version>
 		</dependency>
 
 		<dependency>
@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
-			<version>2.13.0</version>
+			<version>2.4</version>
 		</dependency>
 
 		<dependency>
@@ -51,6 +51,18 @@
 					<source>1.8</source>
 					<target>1.8</target>
 					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<server>tomcat-c2-test</server>
+					<port>8080</port>
+					<path>/MosaicA</path>
+					<url>http://52.68.123.119:8080/manager/text</url>
 				</configuration>
 			</plugin>
 		</plugins>
