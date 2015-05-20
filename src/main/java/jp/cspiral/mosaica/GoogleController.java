@@ -20,14 +20,21 @@ public class GoogleController {
 
 	private static final String[] PROXY_LIST = {
 		"localhost",
-		"52.68.235.132",
-		};
+		"10.0.10.81",
+		"10.0.10.75",
+		"10.0.10.120",
+		"10.0.10.52",
+		"10.0.10.57",
+		"10.0.10.56",
+		"10.0.10.53",
+		"10.0.10.54"
+			};
 	private static final String PROXY_PORT = "3128";
 
 	private int indexOfProxyList = 0;
 
 	// 連続アクセス回数
-	private static final int MAX_ACCESS_COUNT = 10;
+	private static final int MAX_ACCESS_COUNT = 3;
 
 	/**
 	 * コンストラクタ
@@ -36,30 +43,32 @@ public class GoogleController {
 	 */
 	GoogleController() {
 		System.setProperty("http.proxyHost", PROXY_LIST[indexOfProxyList]);
-        System.setProperty("http.proxyPort", PROXY_PORT);
-        System.out.println("proxy: " + PROXY_LIST[indexOfProxyList]);
+		System.setProperty("http.proxyPort", PROXY_PORT);
+		System.out.println("proxy: " + PROXY_LIST[indexOfProxyList]);
 	}
 
 	/**
 	 * 画像のURLをGoogleに送り、類似画像のURLを取得し、ChildImageを返す
 	 *
-	 * @param originalImage 元画像
-	 * @param keyword キーワード
+	 * @param originalImage
+	 *            元画像
+	 * @param keyword
+	 *            キーワード
 	 * @return ChildImage
 	 * @author tomita
 	 * @throws IOException
 	 */
-	public ChildImage sendGoogle(BufferedImage originalImage, String keyword) throws IOException {
+	public ChildImage sendGoogle(BufferedImage originalImage, String keyword)
+			throws IOException {
 		ChildImage childImage = new ChildImage();
 
 		// サーバー上に保存
 		String dirname = "/usr/share/tomcat7/webapps/images/";
 		String filename = new Date().getTime() + ".jpg";
 		File file = new File(dirname + filename);
-		//System.out.println(filename);
+		// System.out.println(filename);
 		ImageIO.write(originalImage, "jpeg", file);
-		String url = "http://52.68.123.119:8080/images/"
-				+ filename;
+		String url = "http://52.69.2.16:8080/images/" + filename;
 
 		String resultImageUrl = sendGoogleByUrl(url, keyword);
 		childImage.setUrl(resultImageUrl);
@@ -72,39 +81,52 @@ public class GoogleController {
 	/**
 	 * 画像のURLをGoogleに送り、類似画像のURLを取得する
 	 *
-	 * @param originalImageUrl 元画像のURL
-	 * @param keyword キーワード
+	 * @param originalImageUrl
+	 *            元画像のURL
+	 * @param keyword
+	 *            キーワード
 	 * @return 類似画像のURL
 	 * @author tomita
 	 * @throws IOException
 	 */
-	private String sendGoogleByUrl(String originalImageUrl, String keyword) throws IOException {
+	private String sendGoogleByUrl(String originalImageUrl, String keyword)
+			throws IOException {
 		// URLエンコード
 		originalImageUrl = URLEncoder.encode(originalImageUrl, "UTF-8");
 
-		String searchUrl = "http://www.google.co.jp/searchbyimage?image_url=" + originalImageUrl;
+		String searchUrl = "http://www.google.co.jp/searchbyimage?image_url="
+				+ originalImageUrl;
 		if (!keyword.equals("")) {
 			searchUrl += "&q=" + keyword;
 		}
-		//System.out.println("searchUrl: " + searchUrl);
+		// System.out.println("searchUrl: " + searchUrl);
 
 		// 検索ページから類似画像のリンクを取得
 		Document doc = getDocument(searchUrl);
-		String href = doc.select("#imagebox_bigimages > div > a").attr("href");
-
-		// うまくいかないとき
-		if (href.equals("")) {
-			System.out.println(doc.select("div.card-section").text());
-			// ページをダンプ
-			dumpHtml(doc.html());
+		String href;
+		try {
+			href = doc.select("#imagebox_bigimages > div > a").attr("href");
+			if("".equals(href)){
+				// ページをダンプ
+				dumpHtml(doc.html());
+				System.out.println("href is null url: " + doc.baseUri());
+				// もう一度トライ
+				// changeProxy();
+				doc = getDocument(searchUrl);
+				href = doc.select("#imagebox_bigimages > div > a").attr("href");
+			}
+		} catch (NullPointerException e) {
+			// getDocumentがnullのとき
+			System.out.println("doc is null url: " + searchUrl);
+			href = "";
 		}
 
 		searchUrl = "https://www.google.co.jp" + href;
-		//System.out.println("searchUrl: " + searchUrl);
+		// System.out.println("searchUrl: " + searchUrl);
 
 		// 類似画像のページから 1つ目のリンクのサムネイルを取得
 		doc = getDocument(searchUrl);
-		//System.out.println(page.select("a.rg_l img"));
+		// System.out.println(page.select("a.rg_l img"));
 		return doc.select("a.rg_l img[data-src]").attr("data-src");
 	}
 
@@ -116,12 +138,12 @@ public class GoogleController {
 	 * @author tomita
 	 */
 	private Document getDocument(String url) {
-		for (int i=0; i<MAX_ACCESS_COUNT; i++) {
+		for (int i = 0; i < MAX_ACCESS_COUNT; i++) {
 			try {
 				// 連続アクセスするとGoogleに怒られて繋がらなくなるので，
 				// 500でエラーは起きなかった
 				try {
-					Thread.sleep(200);
+					Thread.sleep(300);
 				} catch (InterruptedException e) {
 					// TODO 自動生成された catch ブロック
 					e.printStackTrace();
@@ -129,13 +151,16 @@ public class GoogleController {
 				return Jsoup.connect(url).userAgent(USERAGENT).get();
 			} catch (SocketTimeoutException e) {
 				// 何もせずにもう一度アクセス
+				System.out.println("timeout");
 			} catch (HttpStatusException e) {
-				// Googleに怒られたらプロキシを変更
 				if (e.getUrl().startsWith("http://ipv4.google.com/sorry/IndexRedirect?continue=")) {
-					changeProxy();
+					// changeProxy();
+					System.out.println("Google angry: " + e.getUrl());
 				} else {
-					System.out.println("url:" + e.getUrl());
+					System.out.println("HttpStatusException code:" + e.getStatusCode() );//+ ", url:" + e.getUrl());
 				}
+				// Googleに怒られたらプロキシを変更
+				changeProxy();
 			} catch (IOException e) {
 				// TODO 自動生成された catch ブロック
 				e.printStackTrace();
@@ -171,7 +196,7 @@ public class GoogleController {
 	 * @author tomita
 	 */
 	private void changeProxy() {
-		indexOfProxyList = (indexOfProxyList+1)%PROXY_LIST.length;
+		indexOfProxyList = (indexOfProxyList + 1) % PROXY_LIST.length;
 		System.setProperty("http.proxyHost", PROXY_LIST[indexOfProxyList]);
 		System.out.println("proxy: " + PROXY_LIST[indexOfProxyList]);
 	}

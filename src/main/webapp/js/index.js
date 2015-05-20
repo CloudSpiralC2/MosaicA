@@ -1,4 +1,4 @@
-var endpoint = 'http://52.68.123.119:8080/MosaicA/api';
+var endpoint = 'http://52.69.2.16:8080/MosaicA/api';
 
 // init
 var imgId;

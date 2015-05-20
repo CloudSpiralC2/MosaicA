@@ -62,7 +62,7 @@
 					<server>tomcat-c2-test</server>
 					<port>8080</port>
 					<path>/MosaicA</path>
-					<url>http://52.68.123.119:8080/manager/text</url>
+					<url>http://52.69.2.16:8080/manager/text</url>
 				</configuration>
 			</plugin>
 		</plugins>
