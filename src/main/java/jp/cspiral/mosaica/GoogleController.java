@@ -20,7 +20,7 @@ public class GoogleController {
 
 	private static final String[] PROXY_LIST = {
 		"localhost",
-		"10.0.10.135",
+		"52.68.235.132",
 		};
 	private static final String PROXY_PORT = "3128";
 
