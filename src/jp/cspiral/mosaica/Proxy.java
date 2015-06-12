@@ -8,7 +8,6 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
-import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.StartInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesRequest;
 
@@ -42,13 +41,18 @@ public class Proxy {
 	
 	public void restart() {
 		stop();
+		//待機が必要
 		start();
 	}
-	/*
-	public String getLocalIp() {
+
+	public String getPrivateIpAddress() {
+	    return "";
+	}
+	
+	public String getStatus() {
 		return "";
 	}
-	*/
+
 	public static void main(String[] args) throws IOException {
 		Proxy proxy = new Proxy("i-deb5732b");
 		proxy.restart();
