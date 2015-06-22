@@ -1,0 +1,21 @@
+{
+  "name": "MosaicA",
+  "version": "0.0.0",
+  "homepage": "https://github.com/CloudSpiralC2/MosaicA",
+  "authors": [
+    "tktk <tktk.stereoman@gmail.com>"
+  ],
+  "main": "index.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jQuery": "~2.1.4",
+    "polymer": "Polymer/polymer#1.0.0"
+  }
+}
