@@ -33,6 +33,7 @@
 		<link rel="import" href="js/bower_components/paper-input/paper-input.html"></link>
 		<link rel="import" href="js/bower_components/paper-input/paper-input-container.html"></link>
 		<link rel="import" href="js/bower_components/paper-input/paper-input-error.html"></link>
+		<link rel="import" href="js/bower_components/paper-spinner/paper-spinner.html"></link>
 		<link rel="import" href="js/bower_components/iron-icons/iron-icons.html"></link>
 		<link rel="import" href="js/bower_components/iron-icons/social-icons.html"></link>
 		<link rel="import" href="js/bower_components/iron-image/iron-image.html"></link>
@@ -60,25 +61,24 @@
 					<div class="params">
 						<paper-input-container auto-validate>
 							<label>horizontal</label>
-							<input is="iron-input" pattern="[0-9]*">
+							<input is="iron-input" pattern="[0-9]*" value="2">
 							<paper-input-error>Only numbers are allowed!</paper-input-error>
 						</paper-input-container>
 						<paper-input-container auto-validate>
 							<label>vertical</label>
-							<input is="iron-input" pattern="[0-9]*">
+							<input is="iron-input" pattern="[0-9]*" value="2">
 							<paper-input-error>Only numbers are allowed!</paper-input-error>
 						</paper-input-container>
 						<paper-input-container>
 							<label>keyword</label>
 							<input is="iron-input">
 						</paper-input-container>
+						<br>
+						<paper-button raised style="margin-left: 40%;" id="mosaic_button">Mosaic</paper-button>
 					</div>
 				</paper-material>
 
 				<div id="mosaic_button_box">
-					<paper-button raised="true" id="mosaic_button" class="flex">
-						MosaicA
-					</paper-button>
 				</div>
 
 				<paper-material elevation="3" id="right">
@@ -88,16 +88,17 @@
 					</paper-toolbar>
 
 					<div id="result_image_box" class="">
-						<iron-image class="image" sizing="contain" src="http://lorempixel.com/400/400"></iron-image>
+						<iron-image class="image" sizing="contain" src="" ></iron-image>
 					</div>
 
 					<div class="params">
 						<paper-input-container auto-validate>
 							<label>image ID</label>
-							<input is="iron-input">
+							<input is="iron-input" id="imageid">
 						</paper-input-container>
 						<br>
-						<paper-button raised style="margin-left: 40%;">Get Image</paper-button>
+						<paper-button raised id="getimage">Get Image</paper-button>
+						<paper-spinner id="loading"></paper-spinner>
 					</div>
 
 
