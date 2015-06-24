@@ -1,4 +1,4 @@
-var endpoint = 'http://52.69.2.16:8080/MosaicA/api';
+var endpoint = 'http://52.69.136.65:8080/MosaicA/api';
 
 // 読み込み完了時処理
 $(function() {

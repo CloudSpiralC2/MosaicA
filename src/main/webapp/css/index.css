@@ -69,21 +69,21 @@ paper-scroll-header-panel{
 
 #left {
 	background-color: #FAFAFA;
-	margin-top: 10px;
-	margin-left: 5%;
-	width: 40%;
+	margin-top: 30px;
+	margin-left: 3%;
+	width: 45%;
 	height: 100%;
 }
 
 #right {
 	background-color: #FAFAFA;
-	margin-top: 10px;
-	margen-left: 55%;
-	width: 40%;
+	margin-top: 30px;
+	margen-left: 52%;
+	width: 45%;
 }
 
 #mosaic_button_box {
-	width: 10%;
+	width: 4%;
 }
 
 #mosaic_button {

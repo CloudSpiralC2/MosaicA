@@ -126,7 +126,7 @@ function getImage(imageid){
       var ratiox = 500 / sizex;
       var ratioy = 500 / sizey;
       var child_sizex = (sizex / divx) * ratiox ; // 子の横サイズ
-      var child_sizey = sizey / divy * ratioy; // 子の縦サイズ
+      var child_sizey = sizey / divy * ratiox; // 子の縦サイズ
       lineUpImage(divx, child_sizex, child_sizey, urllist);
     }
   });
