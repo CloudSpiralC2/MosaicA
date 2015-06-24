@@ -22,6 +22,7 @@
 		<script src="js/index.js"></script>
 		<script src="js/main.js"></script>
 		<script src="js/viewimage.js"></script-->
+		<script src="js/mosaica.js"></script>
 
 		<!-- polymer -->
 		<link rel="import" href="js/bower_components/paper-toolbar/paper-toolbar.html"></link>
@@ -51,11 +52,12 @@
 						<paper-icon-button icon="camera-enhance"></paper-icon-button>
 						<paper-icon-button icon="perm-media"></paper-icon-button>
 					</paper-toolbar>
+
 					<div id="original_image_box">
 						<iron-image class="image" sizing="contain" src="http://lorempixel.com/400/400"></iron-image>
 					</div>
 
-					<div id="params">
+					<div class="params">
 						<paper-input-container auto-validate>
 							<label>horizontal</label>
 							<input is="iron-input" pattern="[0-9]*">
@@ -84,15 +86,22 @@
 						<div class="title">Mosaic Image</div>
 						<paper-icon-button icon="social:share"></paper-icon-button>
 					</paper-toolbar>
-					</paper-toolbar>
-					<div id="result_image_box" class="">
-					<iron-image class="image" sizing="contain" src="http://lorempixel.com/400/400"></iron-image>
-					</div>
-					<div>
-						aaaaa
-					</div>
-				</paper-material>
 
+					<div id="result_image_box" class="">
+						<iron-image class="image" sizing="contain" src="http://lorempixel.com/400/400"></iron-image>
+					</div>
+
+					<div class="params">
+						<paper-input-container auto-validate>
+							<label>image ID</label>
+							<input is="iron-input">
+						</paper-input-container>
+						<br>
+						<paper-button raised style="margin-left: 40%;">Get Image</paper-button>
+					</div>
+
+
+				</paper-material>
 			</div>
 		</paper-header-panel>
 
