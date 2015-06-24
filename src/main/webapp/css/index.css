@@ -45,7 +45,6 @@ paper-scroll-header-panel{
 	height: 100%;
 }
 
-
 .title {
 	font-size: 36px;
 }
@@ -60,27 +59,39 @@ paper-scroll-header-panel{
 
 .image {
 //background-color: lightgray !important;
+	margin-top: 5px;
 	height: 400px;
 	width: 100%;
 }
+#head{
+	background-color: rgba(54,77,73,1);
+}
 
 #left {
+	background-color: #FAFAFA;
 	margin-top: 10px;
 	margin-left: 5%;
 	width: 40%;
 	height: 100%;
-	overflow: hidden;
 }
 
 #right {
+	background-color: #FAFAFA;
 	margin-top: 10px;
 	margen-left: 55%;
 	width: 40%;
-	overflow: hidden;
+}
+
+#mosaic_button_box {
+	width: 10%;
 }
 
 #mosaic_button {
-	width: 10%;
+	background-color: green;
+	color: white;
+	margin-top: 150%;
+	margin-left: 25%;
+	margin-right: 25%;
 }
 
 #original_image_box{
@@ -89,4 +100,9 @@ paper-scroll-header-panel{
 
 #result_image_box{
 
+}
+
+#params {
+	margin-left: 10%;
+	margin-right: 10%;
 }

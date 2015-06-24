@@ -25,44 +25,65 @@
 
 		<!-- polymer -->
 		<link rel="import" href="js/bower_components/paper-toolbar/paper-toolbar.html"></link>
-		<link rel="import" href="js/bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html"></link>
 		<link rel="import" href="js/bower_components/paper-header-panel/paper-header-panel.html"></link>
 		<link rel="import" href="js/bower_components/paper-icon-button/paper-icon-button.html"></link>
 		<link rel="import" href="js/bower_components/paper-button/paper-button.html"></link>
-		<link rel="import" href="js/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html"></link>
 		<link rel="import" href="js/bower_components/paper-material/paper-material.html"></link>
+		<link rel="import" href="js/bower_components/paper-input/paper-input.html"></link>
+		<link rel="import" href="js/bower_components/paper-input/paper-input-container.html"></link>
+		<link rel="import" href="js/bower_components/paper-input/paper-input-error.html"></link>
 		<link rel="import" href="js/bower_components/iron-icons/iron-icons.html"></link>
+		<link rel="import" href="js/bower_components/iron-icons/social-icons.html"></link>
 		<link rel="import" href="js/bower_components/iron-image/iron-image.html"></link>
 
 	</head>
 	<body class="fullbleed unresolved">
 		<paper-header-panel class="flex">
-		    <paper-toolbar>
+		    <paper-toolbar id="head">
 					<div class="title">MosaicA</div>
-					<paper-icon-button icon="menu"></paper-icon-button>
+					<paper-icon-button icon="help-outline"></paper-icon-button>
 				</paper-toolbar>
 
 				<div class="horizontal layout">
 				<paper-material elevation="3" id="left">
 					<paper-toolbar class="green">
-						<div class="title">left</div>
+						<div class="title">Original Image</div>
 						<paper-icon-button icon="camera-enhance"></paper-icon-button>
 						<paper-icon-button icon="perm-media"></paper-icon-button>
 					</paper-toolbar>
 					<div id="original_image_box">
-					<iron-image class="image" sizing="contain" src="http://lorempixel.com/400/400"></iron-image>
+						<iron-image class="image" sizing="contain" src="http://lorempixel.com/400/400"></iron-image>
+					</div>
+
+					<div id="params">
+						<paper-input-container auto-validate>
+							<label>horizontal</label>
+							<input is="iron-input" pattern="[0-9]*">
+							<paper-input-error>Only numbers are allowed!</paper-input-error>
+						</paper-input-container>
+						<paper-input-container auto-validate>
+							<label>vertical</label>
+							<input is="iron-input" pattern="[0-9]*">
+							<paper-input-error>Only numbers are allowed!</paper-input-error>
+						</paper-input-container>
+						<paper-input-container>
+							<label>keyword</label>
+							<input is="iron-input">
+						</paper-input-container>
 					</div>
 				</paper-material>
 
-				<div id="mosaic_button">
-					<paper-button raised="true" class="flex">
+				<div id="mosaic_button_box">
+					<paper-button raised="true" id="mosaic_button" class="flex">
 						MosaicA
 					</paper-button>
 				</div>
 
 				<paper-material elevation="3" id="right">
-					<paper-toolbar class="red">
-						<div class="title">right</div>
+					<paper-toolbar class="green">
+						<div class="title">Mosaic Image</div>
+						<paper-icon-button icon="social:share"></paper-icon-button>
+					</paper-toolbar>
 					</paper-toolbar>
 					<div id="result_image_box" class="">
 					<iron-image class="image" sizing="contain" src="http://lorempixel.com/400/400"></iron-image>
