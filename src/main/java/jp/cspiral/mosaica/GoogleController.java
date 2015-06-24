@@ -68,7 +68,7 @@ public class GoogleController {
 		File file = new File(dirname + filename);
 		// System.out.println(filename);
 		ImageIO.write(originalImage, "jpeg", file);
-		String url = "http://52.69.2.16:8080/images/" + filename;
+		String url = "http://52.69.136.65:8080/images/" + filename;
 
 		String resultImageUrl = sendGoogleByUrl(url, keyword);
 		childImage.setUrl(resultImageUrl);

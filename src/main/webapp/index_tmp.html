@@ -50,31 +50,32 @@
 				<paper-material elevation="3" id="left">
 					<paper-toolbar class="green">
 						<div class="title">Original Image</div>
-						<paper-icon-button icon="camera-enhance"></paper-icon-button>
-						<paper-icon-button icon="perm-media"></paper-icon-button>
+						<paper-icon-button icon="camera-enhance" id="camera"></paper-icon-button>
+						<paper-icon-button icon="perm-media" id="file"></paper-icon-button>
+						<input type="file" accept="image/jpeg" name="file_image">
 					</paper-toolbar>
 
 					<div id="original_image_box">
-						<iron-image class="image" sizing="contain" src="http://lorempixel.com/400/400"></iron-image>
+						<iron-image class="image" id="original_image" sizing="contain" src="http://lorempixel.com/400/400"></iron-image>
 					</div>
 
 					<div class="params">
 						<paper-input-container auto-validate>
 							<label>horizontal</label>
-							<input is="iron-input" pattern="[0-9]*" value="2">
+							<input is="iron-input" pattern="[0-9]*" value="2" id="divx">
 							<paper-input-error>Only numbers are allowed!</paper-input-error>
 						</paper-input-container>
 						<paper-input-container auto-validate>
 							<label>vertical</label>
-							<input is="iron-input" pattern="[0-9]*" value="2">
+							<input is="iron-input" pattern="[0-9]*" value="2" id="divy">
 							<paper-input-error>Only numbers are allowed!</paper-input-error>
 						</paper-input-container>
 						<paper-input-container>
 							<label>keyword</label>
-							<input is="iron-input">
+							<input is="iron-input" id="keyword" value="">
 						</paper-input-container>
 						<br>
-						<paper-button raised style="margin-left: 40%;" id="mosaic_button">Mosaic</paper-button>
+						<paper-button raised id="mosaic_button">Mosaic</paper-button>
 					</div>
 				</paper-material>
 
@@ -84,7 +85,7 @@
 				<paper-material elevation="3" id="right">
 					<paper-toolbar class="green">
 						<div class="title">Mosaic Image</div>
-						<paper-icon-button icon="social:share"></paper-icon-button>
+						<paper-icon-button icon="social:share" id="share"></paper-icon-button>
 					</paper-toolbar>
 
 					<div id="result_image_box" class="">
@@ -94,7 +95,7 @@
 					<div class="params">
 						<paper-input-container auto-validate>
 							<label>image ID</label>
-							<input is="iron-input" id="imageid">
+							<input is="iron-input" id="imageid" value="0">
 						</paper-input-container>
 						<br>
 						<paper-button raised id="getimage">Get Image</paper-button>

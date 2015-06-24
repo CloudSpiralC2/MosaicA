@@ -111,3 +111,7 @@ paper-button {
 	margin-left: 10%;
 	margin-right: 10%;
 }
+
+input[type="file"]{
+	display: none;
+}
