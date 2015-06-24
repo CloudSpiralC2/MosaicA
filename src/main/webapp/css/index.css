@@ -59,7 +59,9 @@ paper-scroll-header-panel{
 }
 
 .image {
-	background-color: lightgray !important;
+//background-color: lightgray !important;
+	height: 400px;
+	width: 100%;
 }
 
 #left {
@@ -67,13 +69,14 @@ paper-scroll-header-panel{
 	margin-left: 5%;
 	width: 40%;
 	height: 100%;
+	overflow: hidden;
 }
 
 #right {
-	float: left;
 	margin-top: 10px;
 	margen-left: 55%;
 	width: 40%;
+	overflow: hidden;
 }
 
 #mosaic_button {
@@ -81,7 +84,7 @@ paper-scroll-header-panel{
 }
 
 #original_image_box{
-	
+
 }
 
 #result_image_box{
