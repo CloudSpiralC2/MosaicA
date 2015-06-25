@@ -44,17 +44,86 @@ $(function(){
   });
 
   // カメラから
+  $("#camera").on('click', function(){
+    // カメラ使えるかチェック
+    if(!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)){
+      alert("カメラが使えません");
+      return;
+    }
+
+    // カメラ映像をストリーミング取得
+     var video = $("#video")[0]; // getElementByIdと同等
+    //var video = document.createElement('video');
+    // サイズの設定
+    video.width = $("#original_image").css("width").split("p")[0]; // 取得したサイズからpxを除いて設定
+    video.height = $("#original_image").css("height").split("p")[0];
+    video.autoplay = 1;
+
+    // 現在の表示画像を消す
+    $("#original_image").attr('hidden', 'true');;
+    // ビデオ表示
+    $("#video").removeAttr('hidden');
+
+    console.log(video.width);
+    console.log(video.height);
+    var localMediaStream = null;
+
+    window.URL = window.URL || window.webkitURL;
+    // ブラウザ間の相違を吸収する
+    navigator.mediaDevices = navigator.mediaDevices || ((navigator.mozGetUserMedia || navigator.webkitGetUserMedia) ? {
+      getUserMedia: function(c) {
+        return new Promise(function(y, n) {
+          (navigator.mozGetUserMedia ||
+            navigator.webkitGetUserMedia).call(navigator, c, y, n);
+          });
+        }
+      } : null);
+    var constraints = {video: true, audio: false};
+    // video許可をとり，映像を流す
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then(function(stream) {
+        video.src = window.URL.createObjectURL(stream);
+        localMediaStream = stream;
+      })
+      .catch(function(err){
+        alert("camera error: 許可がありません" + err);
+      });
+
+    // canvasの設定
+    var canvas = document.createElement('canvas');
+    canvas.width = video.width;
+    canvas.height = video.height;
+    var context = canvas.getContext('2d');
+
+    // canvasに描画して画像にする
+    var snapshot = function(){
+      if(localMediaStream){
+        context.drawImage(video, 0, 0);//, video.width, video.height);
+        var canvas_dataurl = canvas.toDataURL('image/jpeg');
+        $("#original_image").attr('src', canvas_dataurl);
+        $("#video").attr('hidden', 'true');
+        $("#original_image").removeAttr('hidden');
+        dataUrl = canvas_dataurl;
+      }
+    }
+
+    // カメラ画像をクリックで
+    $("#video").on('click', function(){
+      snapshot();
+    });
+  });
 
   // モザイク処理実行
   $("#mosaic_button").on('click', function(){
     console.log(dataUrl);
+    if(dataUrl == null){
+      alert("画像を選択してください");
+      return;
+    }
     var divx = $("#divx").val();
     var divy = $("#divy").val();
     var key = $("#key").val();
     if(key==null) key = "";
-    console.log(divx);
-    console.log(divy);
-    console.log(key);
     if (confirm("画像を送信してもよろしいですか？")){
       $("#loading").attr('active', 'true');
       // API呼び出し
