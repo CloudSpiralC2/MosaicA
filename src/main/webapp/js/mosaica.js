@@ -1,9 +1,23 @@
 var endpoint = "http://52.69.136.65:8080/MosaicA/api";
 
 var dataUrl;
+var isMobile=0;
 
 // 読み込み完了時処理
 $(function(){
+
+  // スマホ表示
+  var useragent = navigator.userAgent;
+  if(useragent.indexOf('iPhone') > 0 || useragent.indexOf('iPod') > 0 ||
+    useragent.indexOf('Android') > 0){
+     isMobile = 1;
+     $("#left_div").removeClass('horizontal');
+     $("#left_div").addClass('vertical');
+     $('head').append('<link rel="stylesheet" href="css/index_mob.css"></link>');
+  }
+  else{
+    $('head').append('<link rel="stylesheet" href="css/index.css"></link>');
+  }
 
   // プレースホルダ画像のdataUrl取得 TODO
   /*
@@ -22,7 +36,16 @@ $(function(){
   // ファイルから
   $("#file").on('click', function(){
     // ボタンクリック時は隠してあるinputをクリックした扱いにする
-    $('input[type="file"]').click();
+    if(isMobile==1){
+      var input = $('input[type="file"]');
+      input.show();
+      input.css('position', 'absolute');
+      input.css('left', '-1000px');
+      input.click();
+    }
+    else{
+      $('input[type="file"]').click();
+    }
   });
 
   // ファイル選択時の処理
@@ -190,9 +213,13 @@ function getImage(imageid){
       var divy = $(xml).find('divy').text(); // 縦方向分割数
       var sizex = $(xml).find('sizex').text(); // 横サイズ
       var sizey = $(xml).find('sizey').text(); // 縦サイズ
-      var ratiox = 500 / sizex;
-      var ratioy = 500 / sizey;
-      var child_sizex = (sizex / divx) * ratiox ; // 子の横サイズ
+      // var ratiox = 500 / sizex;
+      var ratiox = $("#result_image_box").css('width').split("p")[0] / sizex;
+      console.log($("#result_image_box").css('width'));
+      console.log($("#result_image_box").css('height'));
+      // var ratioy = 500 / sizey;
+      var ratioy = $("#result_image_box").css('height').split("p")[0] / sizey;
+      var child_sizex = sizex / divx * ratiox ; // 子の横サイズ
       var child_sizey = sizey / divy * ratiox; // 子の縦サイズ
       lineUpImage(divx, child_sizex, child_sizey, urllist);
     }
