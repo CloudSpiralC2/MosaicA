@@ -7,7 +7,7 @@ $(function(){
 
   // プレースホルダ画像のdataUrl取得 TODO
   /*
-  var source = $("#original_image").attr("src");
+  var source = $("#original_image")[0];
   var image = new Image();
   image.src = source.src;
 
@@ -64,8 +64,6 @@ $(function(){
     // ビデオ表示
     $("#video").removeAttr('hidden');
 
-    console.log(video.width);
-    console.log(video.height);
     var localMediaStream = null;
 
     window.URL = window.URL || window.webkitURL;

@@ -57,11 +57,21 @@ paper-scroll-header-panel{
 
 }
 
-paper-button {
+paper-button.center_button {
 	background-color: green;
 	color: white;
 	margin-bottom: 10px;
 	margin-left: 40%;
+}
+
+#getimage{
+	background-color: green;
+	color: white;
+}
+
+paper-button.result_button {
+	background-color: #2abb9b;
+	color: white;
 }
 
 #original_image_box{
@@ -81,4 +91,13 @@ paper-button {
 
 input[type="file"]{
 	display: none;
+}
+
+img {
+	-webkit-transition: all 0.2s;
+	transition: all 0.2s;
+}
+img:active{
+	-webkit-transform: scale(10);
+	transform: scale(10);
 }
