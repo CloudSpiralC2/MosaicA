@@ -209,8 +209,12 @@ $(function(){
         alert("Image ID を確認してください");
       }
     });
-
   });
+
+  $("#show_original_size").on('click', function(){
+    window.open("viewimage.html?" + $("#imageid").val());
+  });
+
 });
 // ここまで読み込み時処理
 
@@ -268,7 +272,6 @@ function getImage(imageid){
         var child_sizey = sizey / divy * ratioy; // 子の縦サイズ
       }
       lineUpImage(divx, child_sizex, child_sizey, urllist);
-
     }
   });
 }

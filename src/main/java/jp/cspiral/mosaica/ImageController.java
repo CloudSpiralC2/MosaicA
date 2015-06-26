@@ -1,6 +1,5 @@
 package jp.cspiral.mosaica;
 
-import java.util.List;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.RasterFormatException;
@@ -9,21 +8,20 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.MalformedInputException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
-import org.glassfish.jersey.internal.util.Base64;
-
 import jp.cspiral.mosaica.util.DBUtils;
+
+import org.glassfish.jersey.internal.util.Base64;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;

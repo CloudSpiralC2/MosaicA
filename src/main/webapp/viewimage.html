@@ -3,15 +3,76 @@
 	<meta charset="UTF-8">
 	<title>MosaicA</title>
 	<head>
-		<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
-		<script type="text/javascript" src="js/viewimage.js"></script>
+		<style>
+			img {
+				-webkit-transition: all 0.2s;
+				transition: all 0.2s;
+			}
+			img:active{
+				-webkit-transform: scale(10);
+				transform: scale(10);
+			}
+		</style>
+		<script src="js/bower_components/jQuery/dist/jquery.min.js"></script>
+		<script>
+			$(function(){
+				var imageid = document.URL.split("?")[1];
+
+  			var urllist = [];
+  			$.ajax({
+    			url : "http://52.69.136.65:8080/MosaicA/api/getImage",
+    			data : {
+      			imageId : imageid
+    			},
+    			dataType : "xml",
+    			crossDomain : true,
+    			success : function(xml) {
+      			// 存在しない or 処理中のときはreturn
+      			if($(xml).find('status').text()=="processing"){
+	      			$("#loading").removeAttr('active');
+        			return;
+      			}
+      			$($(xml).find('child')).each(function() {
+        			var str = $(this).find('url').text();
+        			urllist.push(str);
+        			var x = $(this).find('x').text();
+        			var y = $(this).find('y').text();
+      			});
+      			var divx = $(xml).find('divx').text(); // 横方向分割数
+      			var divy = $(xml).find('divy').text(); // 縦方向分割数
+      			var sizex = $(xml).find('sizex').text(); // 横サイズ
+      			var sizey = $(xml).find('sizey').text(); // 縦サイズ
+      			var child_sizex = sizex / divx; // 子の横サイズ
+      			var child_sizey = sizey / divy; // 子の縦サイズ
+
+      			lineUpImage(divx, child_sizex, child_sizey, urllist);
+    			}
+				});
+
+				// 一列の画像の数，一つの画像の横幅，一つの画像の縦幅，画像のリスト
+				function lineUpImage(divX, width, height, children) {
+  				$("#result_image_box").empty();
+					count = 0;
+					line = 1;
+					for (var i = 0; i < children.length; i++) {
+						if (children[i] == "") {
+							$("#result_image_box").append('<img src="image/gray.jpg" style="width:' + width + 'px; height:' + height + 'px;">');
+						} else {
+							$("#result_image_box").append('<img src="' + children[i] + '" style="width:' + width + 'px; height:' + height + 'px;">');
+  					}
+						count++;
+						if (count >= divX) {
+							$("#result_image_box").append('<br>');
+							count = 0;
+							line++;
+						}
+					}
+				}
+			});
+		</script>
 	</head>
 	<body>
-		<div>MosaicA
-			<input id="imageid" type="text">
-			<button id="getimage">GetMosaicA</button>
-		</div>
-		<div id="mosaic" style="line-height: 0px;position:relative;">
+		<div id="result_image_box" style="line-height: 0px;position:relative;">
 		</div>
 	</body>
 </html>
