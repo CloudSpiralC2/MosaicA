@@ -2,9 +2,13 @@ var endpoint = "http://52.69.136.65:8080/MosaicA/api";
 
 var dataUrl;
 var isMobile=0;
+var result_original_width = 0;
+var result_original_height = 0;
+
 
 // 読み込み完了時処理
 $(function(){
+
 
   // スマホ表示
   var useragent = navigator.userAgent;
@@ -213,15 +217,32 @@ function getImage(imageid){
       var divy = $(xml).find('divy').text(); // 縦方向分割数
       var sizex = $(xml).find('sizex').text(); // 横サイズ
       var sizey = $(xml).find('sizey').text(); // 縦サイズ
-      // var ratiox = 500 / sizex;
-      var ratiox = $("#result_image_box").css('width').split("p")[0] / sizex;
-      console.log($("#result_image_box").css('width'));
-      console.log($("#result_image_box").css('height'));
-      // var ratioy = 500 / sizey;
-      var ratioy = $("#result_image_box").css('height').split("p")[0] / sizey;
-      var child_sizex = sizex / divx * ratiox ; // 子の横サイズ
-      var child_sizey = sizey / divy * ratiox; // 子の縦サイズ
+
+      // 結果表示画像のサイズ 縦長と横長を繰り返し取得してもサイズが変わらないようにする
+      var imagebox = $("#result_image_box");
+      tmp_width = imagebox.css('width').split("p")[0];
+      tmp_height = imagebox.css('height').split("p")[0];
+      if(result_original_width < tmp_width){
+        result_original_width = tmp_width;
+      }
+      if(result_original_height < tmp_height){
+        result_original_height = tmp_height;
+      }
+
+      // 横長画像の場合
+      if(parseInt(sizex) >= parseInt(sizey)){
+        var ratiox = result_original_width / sizex;
+        var child_sizex = sizex / divx * ratiox ; // 子の横サイズ
+        var child_sizey = sizey / divy * ratiox; // 子の縦サイズ
+      }
+      // 縦長画像の場合
+      else{
+        var ratioy = result_original_height / sizey;
+        var child_sizex = sizex / divx * ratioy ; // 子の横サイズ
+        var child_sizey = sizey / divy * ratioy; // 子の縦サイズ
+      }
       lineUpImage(divx, child_sizex, child_sizey, urllist);
+
     }
   });
 }
