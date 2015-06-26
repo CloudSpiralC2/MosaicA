@@ -1,10 +1,9 @@
 var endpoint = "http://52.69.136.65:8080/MosaicA/api";
 
-var dataUrl;
-var isMobile=0;
-var result_original_width = 0;
-var result_original_height = 0;
-
+var dataUrl; // モザイク画像生成用変数
+var isMobile=0; // モバイル端末フラグ
+var result_original_width = 0; // モザイク画像表示用横サイズ
+var result_original_height = 0; // 縦サイズ
 
 // 読み込み完了時処理
 $(function(){
@@ -40,7 +39,7 @@ $(function(){
 
   // ファイルから
   $("#file").on('click', function(e){
-    var input = $('input[type="file"]');
+    var input = $('input[type="file"]')[0];
     // ボタンクリック時は隠してあるinputをクリックした扱いにする
     if(isMobile==1){
       e.preventDefault();
@@ -184,6 +183,33 @@ $(function(){
       return;
     }
     getImage(id);
+  });
+
+  // savaImage処理
+  $("#save_mosaic_image").on('click', function(){
+    var spinner = $("#loading2");
+    var imageid = $("#imageid").val();
+    spinner.attr('active', 'true');
+    $("#img_link").remove();
+    $.ajax({
+      url: endpoint + "/saveImage",
+      data: {
+        imageId: imageid
+      },
+      dataType: "text",
+      crossDomain: true,
+      success: function(img_str){
+        console.log(img_str);
+        spinner.removeAttr('active');
+        $("body").append('<a href="' + img_str + '" download="' + imageid + '.jpg" id="img_link">a</a>');
+        $("#img_link")[0].click();
+      },
+      error: function(){
+        spinner.removeAttr('active');
+        alert("Image ID を確認してください");
+      }
+    });
+
   });
 });
 // ここまで読み込み時処理

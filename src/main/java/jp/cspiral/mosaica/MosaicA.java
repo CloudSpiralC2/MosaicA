@@ -59,8 +59,6 @@ public class MosaicA {
 			return Response.status(200).entity(controller.saveImage(imageId)).build();
 		} catch (MongoException e) {
 			return Response.status(200).entity("MongoException").build();
-		} catch (IOException e) {
-			return Response.status(200).entity("IOException").build();
 		}
 	}
 }

@@ -9,13 +9,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.MalformedInputException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
@@ -103,8 +104,8 @@ public class ImageController {
 			int divY = parentImage.getDivY();
 			int sizeX = parentImage.getSizeX();
 			int sizeY = parentImage.getSizeY();
-			int width = (int)Math.ceil(sizeX / divX);
-			int height = (int)Math.ceil(sizeY / divY);
+			int width = (int) Math.ceil(sizeX / divX);
+			int height = (int) Math.ceil(sizeY / divY);
 			ChildImage[] children = new ChildImage[divX * divY];
 
 			// 処理位置位置初期化
@@ -118,43 +119,48 @@ public class ImageController {
 			System.out.println("before stream process");
 
 			// splitedImagesのstreamの各要素に対する類似画像検索の結果(ChildImage)でstreamを作成する
-			Stream<ChildImage> ciStream = stream.parallel().map(splitedImage -> {
-				String nameOfChildImage;
-				ChildImage child;
+			Stream<ChildImage> ciStream = stream.parallel().map(
+					splitedImage -> {
+						String nameOfChildImage;
+						ChildImage child;
 
-				try {
-					// 画像を文字列にエンコード
-					nameOfChildImage = encode(splitedImage);
-					// childImageをnew = googleに投げる この時点ではchildはURLのみ持つ
-					child = googleController.sendGoogle(splitedImage, keyword);
-				} catch (IOException e) {
-					// TODO 自動生成された catch ブロック
-					e.printStackTrace();
-					return null;
-				}
+						try {
+							// 画像を文字列にエンコード
+							nameOfChildImage = encode(splitedImage);
+							// childImageをnew = googleに投げる この時点ではchildはURLのみ持つ
+							child = googleController.sendGoogle(splitedImage,
+									keyword);
+						} catch (IOException e) {
+							// TODO 自動生成された catch ブロック
+							e.printStackTrace();
+							return null;
+						}
 
-				// childの各要素をセット
-				child.setSrc(nameOfChildImage);
-				child.setY((position / divX) % divY);
-				child.setX(position % divX);
+						// childの各要素をセット
+						child.setSrc(nameOfChildImage);
+						child.setY((position / divX) % divY);
+						child.setX(position % divX);
 
-				System.out.println("Current Position:" + (position / divX) % divY + ","+ (position % divX));
+						System.out.println("Current Position:"
+								+ (position / divX) % divY + ","
+								+ (position % divX));
 
-				// 処理位置を進める stream外部の変数を更新するのはよろしくないらしいが…
-				position++;
+						// 処理位置を進める stream外部の変数を更新するのはよろしくないらしいが…
+						position++;
 
-				return child;
-			});
+						return child;
+					});
 
 			// 順序通りにChildImageをリストに追加する
-			ciStream.forEachOrdered(child -> childrenlist.add(child));;
+			ciStream.forEachOrdered(child -> childrenlist.add(child));
+			;
 
 			// streamを閉じる
 			ciStream.close();
 			stream.close();
 
 			// ArrayList -> 配列
-			children = (ChildImage[])childrenlist.toArray(new ChildImage[0]);
+			children = (ChildImage[]) childrenlist.toArray(new ChildImage[0]);
 
 			// 子イメージリストをparentImageに追加する
 			parentImage.setChildren(children);
@@ -192,7 +198,7 @@ public class ImageController {
 
 			// 時間測定 終了時間
 			long end = System.currentTimeMillis();
-			System.out.println("変換時間" + (end - start)  + "ms");
+			System.out.println("変換時間" + (end - start) + "ms");
 
 			return parentImage.getImageId();
 
@@ -201,7 +207,6 @@ public class ImageController {
 			return null;
 		}
 	}
-
 
 	/**
 	 * 親イメージをx*yの子イメージ配列に分割する
@@ -214,27 +219,26 @@ public class ImageController {
 		int divY = parentImage.getDivY();
 		int sizeX = parentImage.getSizeX();
 		int sizeY = parentImage.getSizeY();
-		int width = (int)Math.ceil(sizeX / divX);
-		int height = (int)Math.ceil(sizeY / divY);
+		int width = (int) Math.ceil(sizeX / divX);
+		int height = (int) Math.ceil(sizeY / divY);
 		BufferedImage[] child = new BufferedImage[divX * divY];
 
 		try {
 			for (int i = 0; i < divY; i++) {
 				for (int j = 0; j < divX; j++) {
-					if((width > 9) && (height > 9)){
-					child[i * divX + j] = new BufferedImage(width, // 生成する画像の横サイズ
-							height, // 生成する画像の縦サイズ
-							BufferedImage.TYPE_INT_RGB); // イメージタイプ(RGB:int);
-					child[i * divX + j] = image.getSubimage(j * width, i * height,
-							width, height);
-					}
-					else{
+					if ((width > 9) && (height > 9)) {
+						child[i * divX + j] = new BufferedImage(width, // 生成する画像の横サイズ
+								height, // 生成する画像の縦サイズ
+								BufferedImage.TYPE_INT_RGB); // イメージタイプ(RGB:int);
+						child[i * divX + j] = image.getSubimage(j * width, i
+								* height, width, height);
+					} else {
 						// 拡大倍率
 						int mag;
-						if(width < height)
-							mag = (int)Math.ceil(10/width);
+						if (width < height)
+							mag = (int) Math.ceil(10 / width);
 						else
-							mag = (int)Math.ceil(10/height);
+							mag = (int) Math.ceil(10 / height);
 
 						// child生成
 						BufferedImage preChild = new BufferedImage(width, // 生成する画像の横サイズ
@@ -247,18 +251,19 @@ public class ImageController {
 						// 画像生成
 						preChild = image.getSubimage(j * width, i * height,
 								width, height);
-						for (int k = 0; k < height; k++){		// 行
-							for (int l = 0; l < width; l++){	// 列
+						for (int k = 0; k < height; k++) { // 行
+							for (int l = 0; l < width; l++) { // 列
 								// 座標(l, k)のRGB取得
 								int c = preChild.getRGB(l, k);
-								int r = 255 - (c>>16&0xff);
-								int g = 255 - (c>>8&0xff);
-								int b = 255 - (c&0xff);
-								int rgb = 0xff000000 | r <<16 | g <<8 | b;
+								int r = 255 - (c >> 16 & 0xff);
+								int g = 255 - (c >> 8 & 0xff);
+								int b = 255 - (c & 0xff);
+								int rgb = 0xff000000 | r << 16 | g << 8 | b;
 								// 各ピクセル値をm*m領域に拡大
-								for (int m = 0; m < mag; m++){	// 倍率
-									for (int n = 0; n < mag; n++){
-									child[i * divX + j].setRGB(k*mag+m, l*mag+n, rgb);
+								for (int m = 0; m < mag; m++) { // 倍率
+									for (int n = 0; n < mag; n++) {
+										child[i * divX + j].setRGB(k * mag + m,
+												l * mag + n, rgb);
 									}
 								}
 							}
@@ -273,7 +278,6 @@ public class ImageController {
 		return child;
 	}
 
-
 	/**
 	 * 画像をMIMEエンコードし文字列に変換します
 	 *
@@ -282,7 +286,7 @@ public class ImageController {
 	 * @return MIMEエンコードされた文字列
 	 * @author niki
 	 */
-	public String encode(BufferedImage image){
+	public String encode(BufferedImage image) {
 		// まずバイナリ表現に変換
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		BufferedOutputStream os = new BufferedOutputStream(bos);
@@ -293,18 +297,19 @@ public class ImageController {
 			os.flush();
 			os.close();
 			// 文字列に変換
-			String encodedImage = new String(DatatypeConverter.printBase64Binary(bos.toByteArray()));
+			String encodedImage = new String(
+					DatatypeConverter.printBase64Binary(bos.toByteArray()));
 			bos.close();
 			StringBuilder sb = new StringBuilder();
 			sb.append(encodedImage);
-			 // 拡張子は一応jpgにしています．引数でセットするほうがいいかも？
+			// 拡張子は一応jpgにしています．引数でセットするほうがいいかも？
 			sb.insert(0, "data:image/jpg;base64,");
 			return sb.toString();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "";
-		} catch (ArrayIndexOutOfBoundsException e2){
+		} catch (ArrayIndexOutOfBoundsException e2) {
 			return "Base64.encode error: " + e2.toString();
 		}
 	}
@@ -318,7 +323,7 @@ public class ImageController {
 	 * @author niki
 	 */
 	public BufferedImage decode(String mime) throws IOException {
-		//System.out.println("mime_orig:" + mime);
+		// System.out.println("mime_orig:" + mime);
 		mime = mime.replaceAll("data:image/.*;base64,", "");// この文字列が先頭にくっついてるとダメみたいなので削除
 		byte[] mimeByte = mime.getBytes("UTF-8");
 		ByteArrayInputStream input = new ByteArrayInputStream(
@@ -396,7 +401,7 @@ public class ImageController {
 	 * @return imageId 画像のimageIdト
 	 * @author niki
 	 */
-	public String getImageIdList() throws MongoException{
+	public String getImageIdList() throws MongoException {
 		db = DBUtils.getInstance().getDb();
 		coll = db.getCollection(DB_COLLECTION);
 
@@ -404,8 +409,8 @@ public class ImageController {
 		String crlf = System.getProperty("line.separator");
 
 		DBCursor cursor = coll.find();
-		for (DBObject o: cursor) {
-			imageIdList = imageIdList.concat((String)o.get("imageId"));
+		for (DBObject o : cursor) {
+			imageIdList = imageIdList.concat((String) o.get("imageId"));
 			imageIdList = imageIdList.concat(crlf);
 		}
 
@@ -421,8 +426,7 @@ public class ImageController {
 	 * @author hayata
 	 * @author niki
 	 */
-	public String saveImage(String imageId) throws IOException,
-			MongoException {
+	public String saveImage(String imageId) throws MongoException {
 		db = DBUtils.getInstance().getDb();
 		coll = db.getCollection(DB_COLLECTION);
 
@@ -433,33 +437,47 @@ public class ImageController {
 		int divY = (int) result.get("divY");
 		int sizeX = (int) result.get("sizeX");
 		int sizeY = (int) result.get("sizeY");
-		int width = (int)Math.ceil(sizeX / divX);
-		int height = (int)Math.ceil(sizeY / divY);
+		int width = (int) Math.ceil(sizeX / divX);
+		int height = (int) Math.ceil(sizeY / divY);
 
 		// 保存用イメージ
-		BufferedImage MergedImage = new BufferedImage(width*divX, // 生成する画像の横サイズ
-				height*divY, // 生成する画像の縦サイズ
+		BufferedImage MergedImage = new BufferedImage(width * divX, // 生成する画像の横サイズ
+				height * divY, // 生成する画像の縦サイズ
 				BufferedImage.TYPE_INT_RGB); // イメージタイプ(RGB:int)
 
 		DBObject children = (DBObject) result.get("children");
 
 		for (int i = 0; i < divY; i++) {
 			for (int j = 0; j < divX; j++) {
-				DBObject child = (DBObject) children.get("child" + Integer.toString(i*divX+j));
+				DBObject child = (DBObject) children.get("child"
+						+ Integer.toString(i * divX + j));
 
-				//子画像のURLを取得しBufferedImageに変換
+				// 子画像のURLを取得しBufferedImageに変換
 				String ChildImageURL = (String) child.get("url");
-				BufferedImage ChildImage = ImageIO.read(new URL(ChildImageURL));
+				BufferedImage ChildImage;
 
-				//分割サイズに合うように子画像のサイズを変換
+				// urlが無効な場合，greyの画像で置き換える それでもやばければとばす(黒になる)
+				try {
+					ChildImage = ImageIO.read(new URL(ChildImageURL));
+				} catch (IOException e1) {
+					ChildImageURL = "http://localhost:8080/MosaicA/image/gray.jpg";
+					try {
+						ChildImage = ImageIO.read(new URL(ChildImageURL));
+					} catch (Exception e2) {
+						continue;
+					}
+				}
+
+				// 分割サイズに合うように子画像のサイズを変換
 				BufferedImage resizedChildImage = new BufferedImage(width, // 生成する画像の横サイズ
 						height, // 生成する画像の縦サイズ
 						BufferedImage.TYPE_INT_RGB); // イメージタイプ(RGB:int)
 
-				//サイズ変換
+				// サイズ変換
 				resizedChildImage.getGraphics().drawImage(
-						ChildImage.getScaledInstance(width,height,Image.SCALE_AREA_AVERAGING),
-						0, 0, width, height, null);
+						ChildImage.getScaledInstance(width, height,
+								Image.SCALE_AREA_AVERAGING), 0, 0, width,
+						height, null);
 
 				// 保存用のイメージ作成．
 				// ChildImageの各ピクセルのRGB値をMergedImageの対応するピクセルに格納する.
@@ -473,6 +491,6 @@ public class ImageController {
 			}
 		}
 
-		return this.encode( MergedImage );
+		return this.encode(MergedImage);
 	}
 }
