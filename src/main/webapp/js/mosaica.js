@@ -19,6 +19,7 @@ $(function(){
      $("#left_div").addClass('vertical');
      $('head').append('<link rel="stylesheet" href="css/index_mob.css"></link>');
   }
+  // 及び一般
   else{
     $('head').append('<link rel="stylesheet" href="css/index.css"></link>');
   }
