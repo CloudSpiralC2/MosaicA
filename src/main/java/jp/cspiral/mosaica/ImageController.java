@@ -16,7 +16,9 @@ import java.util.Date;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 
 import org.glassfish.jersey.internal.util.Base64;
 
@@ -291,22 +293,20 @@ public class ImageController {
 			os.flush();
 			os.close();
 			// 文字列に変換
-			String encodedImage = new String(Base64.encode(bos.toByteArray()),
-					"UTF-8");
-			System.out.println("encoded length: " + encodedImage.length());
+			String encodedImage = new String(DatatypeConverter.printBase64Binary(bos.toByteArray()));
+			bos.close();
 			StringBuilder sb = new StringBuilder();
 			sb.append(encodedImage);
 			 // 拡張子は一応jpgにしています．引数でセットするほうがいいかも？
 			sb.insert(0, "data:image/jpg;base64,");
-			return new String(sb);
+			return sb.toString();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "";
 		} catch (ArrayIndexOutOfBoundsException e2){
-			return "Base64.encode error";
+			return "Base64.encode error: " + e2.toString();
 		}
-
 	}
 
 	/**
