@@ -39,17 +39,16 @@ $(function(){
   */
 
   // ファイルから
-  $("#file").on('click', function(){
+  $("#file").on('click', function(e){
+    var input = $('input[type="file"]');
     // ボタンクリック時は隠してあるinputをクリックした扱いにする
     if(isMobile==1){
-      var input = $('input[type="file"]');
-      input.show();
-      input.css('position', 'absolute');
-      input.css('left', '-1000px');
+      e.preventDefault();
+     console.log("mob");
       input.click();
     }
     else{
-      $('input[type="file"]').click();
+      input.click();
     }
   });
 
@@ -223,10 +222,10 @@ function getImage(imageid){
       var imagebox = $("#result_image_box");
       tmp_width = imagebox.css('width').split("p")[0];
       tmp_height = imagebox.css('height').split("p")[0];
-      if(result_original_width < tmp_width){
+      if(result_original_width == 0){
         result_original_width = tmp_width;
       }
-      if(result_original_height < tmp_height){
+      if(result_original_height == 0){
         result_original_height = tmp_height;
       }
 

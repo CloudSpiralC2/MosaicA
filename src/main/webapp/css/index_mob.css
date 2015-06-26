@@ -90,7 +90,8 @@ paper-button.result_button {
 }
 
 input[type="file"]{
-	display: none;
+//	position: absolute;
+//	top: -100px;
 }
 
 img {
