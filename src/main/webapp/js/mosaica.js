@@ -201,7 +201,7 @@ $(function(){
       success: function(img_str){
         console.log(img_str);
         spinner.removeAttr('active');
-        $("body").append('<a href="' + img_str + '" download="' + imageid + '.jpg" id="img_link">a</a>');
+        $("body").append('<a href="' + img_str + '" download="' + imageid + '.jpg" id="img_link"></a>');
         $("#img_link")[0].click();
       },
       error: function(){

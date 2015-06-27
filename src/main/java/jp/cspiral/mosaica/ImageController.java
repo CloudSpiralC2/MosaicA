@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
@@ -151,7 +152,6 @@ public class ImageController {
 
 			// 順序通りにChildImageをリストに追加する
 			ciStream.forEachOrdered(child -> childrenlist.add(child));
-			;
 
 			// streamを閉じる
 			ciStream.close();
@@ -445,8 +445,11 @@ public class ImageController {
 
 		DBObject children = (DBObject) result.get("children");
 
-		for (int i = 0; i < divY; i++) {
-			for (int j = 0; j < divX; j++) {
+		IntStream yStream = IntStream.range(0, divY).parallel();
+
+		yStream.forEach(i ->{
+			IntStream xStream = IntStream.range(0, divX).parallel();
+			xStream.forEach(j -> {
 				DBObject child = (DBObject) children.get("child"
 						+ Integer.toString(i * divX + j));
 
@@ -462,7 +465,7 @@ public class ImageController {
 					try {
 						ChildImage = ImageIO.read(new URL(ChildImageURL));
 					} catch (Exception e2) {
-						continue;
+						return;
 					}
 				}
 
@@ -486,8 +489,11 @@ public class ImageController {
 								resizedChildImage.getRGB(x, y)); // ChildImageのRGB値
 					}
 				}
-			}
-		}
+				xStream.close();
+			});
+		});
+
+		yStream.close();
 
 		return this.encode(MergedImage);
 	}
