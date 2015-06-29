@@ -66,7 +66,7 @@ public class ImageController {
 	// ストリーム処理用 どこを処理しているかを特定する
 	private int position;
 
-	ImageController() {
+	public ImageController() {
 
 	}
 
@@ -329,7 +329,7 @@ public class ImageController {
 
 		// サーバー上に保存
 		String dirname = "/usr/share/tomcat7/webapps/images/";
-		String filename = "preParentImage.jpg";
+		String filename = new Date().getTime() + "_preParentImage.jpg";
 		File file = new File(dirname + filename);
 		System.out.println(filename);
 
