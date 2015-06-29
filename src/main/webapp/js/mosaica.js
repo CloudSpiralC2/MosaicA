@@ -215,6 +215,23 @@ $(function(){
     window.open("viewimage.html?" + $("#imageid").val());
   });
 
+  //tweetボタン押下時
+  $("#tweet").on('click', function(){
+    var imageId = $("#imageid").val();
+    if(imageId==0 || imageId==""){
+      alert("Image IDを入力してください")
+      return;
+    }
+    $.ajax({
+      url: endpoint + '/twitterRequest',
+      data: {imageId: imageId},
+      crossDomain: true,
+      success: function(result){
+        window.location.href = result;
+      }
+    });
+  });
+
 });
 // ここまで読み込み時処理
 
@@ -262,7 +279,7 @@ function getImage(imageid){
       // 横長画像の場合
       if(parseInt(sizex) >= parseInt(sizey)){
         var ratiox = result_original_width / sizex;
-        var child_sizex = sizex / divx * ratiox ; // 子の横サイズ
+        var child_sizex = sizex / divx * ratiox //* 0.9 ; // 子の横サイズ
         var child_sizey = sizey / divy * ratiox; // 子の縦サイズ
       }
       // 縦長画像の場合
@@ -283,9 +300,9 @@ function lineUpImage(divX, width, height, children) {
 	line = 1;
 	for (var i = 0; i < children.length; i++) {
 		if (children[i] == "") {
-			$("#result_image_box").append('<img src="image/gray.jpg" style="width:' + width + 'px; height:' + height + 'px;">');
+			$("#result_image_box").append('<img src="image/gray.jpg" style="width:' + width + 'px; height:' + height + 'px;" class="mosaic">');
 		} else {
-			$("#result_image_box").append('<img src="' + children[i] + '" style="width:' + width + 'px; height:' + height + 'px;">');
+			$("#result_image_box").append('<img src="' + children[i] + '" style="width:' + width + 'px; height:' + height + 'px;" class="mosaic">');
   	}
 		count++;
 		if (count >= divX) {

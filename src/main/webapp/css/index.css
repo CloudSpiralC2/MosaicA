@@ -93,11 +93,11 @@ input[type="file"]{
 	display: none;
 }
 
-img {
+img.mosaic {
 	-webkit-transition: all 0.2s;
 	transition: all 0.2s;
 }
-img:active{
+img.mosaic:active{
 	-webkit-transform: scale(10);
 	transform: scale(10);
 }
