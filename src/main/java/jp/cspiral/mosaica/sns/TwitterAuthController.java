@@ -33,8 +33,8 @@ public class TwitterAuthController {
 	public TwitterAuthController() {
 		ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setDebugEnabled(true)
-	 	  .setOAuthConsumerKey("GhTiizSWeNcsFIlLsGlm64url")
-		  .setOAuthConsumerSecret("rdESnp71GYczKuQLKl3GEGjivRScbwktUs6onhWk5f7pS5IMJT");
+	 	  .setOAuthConsumerKey("")
+		  .setOAuthConsumerSecret("");
 		conf = cb.build(); // 設定の生成
 	}
 
