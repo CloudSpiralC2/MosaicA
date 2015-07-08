@@ -1,4 +1,4 @@
-var endpoint = "http://52.69.136.65:8080/MosaicA/api";
+var endpoint = "http://52.68.162.198:8080/MosaicA/api";
 
 var dataUrl; // モザイク画像生成用変数
 var isMobile=0; // モバイル端末フラグ
@@ -222,16 +222,9 @@ $(function(){
       alert("Image IDを入力してください")
       return;
     }
-    $.ajax({
-      url: endpoint + '/twitterRequest',
-      data: {imageId: imageId},
-      crossDomain: true,
-      success: function(result){
-        window.location.href = result;
-      }
-    });
+    var url = endpoint + "/twitterRequest?imageId=" + imageId;
+    window.open(url);
   });
-
 });
 // ここまで読み込み時処理
 

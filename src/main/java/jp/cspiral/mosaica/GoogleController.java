@@ -19,15 +19,7 @@ public class GoogleController {
 	public static final String USERAGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:32.0) Gecko/20100101 Firefox/32.0";
 
 	private static final String[] PROXY_LIST = {
-		"localhost",
-		"10.0.10.81",
-		"10.0.10.75",
-		"10.0.10.120",
-		"10.0.10.52",
-		"10.0.10.57",
-		"10.0.10.56",
-		"10.0.10.53",
-		"10.0.10.54"
+		"localhost"
 			};
 	private static final String PROXY_PORT = "3128";
 
@@ -68,7 +60,7 @@ public class GoogleController {
 		File file = new File(dirname + filename);
 		// System.out.println(filename);
 		ImageIO.write(originalImage, "jpeg", file);
-		String url = "http://52.69.136.65:8080/images/" + filename;
+		String url = "http://52.68.162.198:8080/images/" + filename;
 
 		String resultImageUrl = sendGoogleByUrl(url, keyword);
 		childImage.setUrl(resultImageUrl);

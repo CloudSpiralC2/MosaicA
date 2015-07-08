@@ -87,6 +87,7 @@ public class MosaicA {
 		try {
 			uri = new URI(authURL);
 			return Response.seeOther(uri).build();
+//			return Response.ok().entity(authURL).build();
 		} catch (URISyntaxException e) {
 			return Response.status(200).entity(e.toString()).build();
 		}

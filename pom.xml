@@ -75,7 +75,9 @@
 					<server>tomcat-c2-test</server>
 					<port>8080</port>
 					<path>/MosaicA</path>
-					<url>http://52.69.136.65:8080/manager/text</url>
+					<url>http://52.68.162.198:8080/manager/text</url>
+					<username>c2</username>
+					<password>c2</password>
 				</configuration>
 			</plugin>
 		</plugins>

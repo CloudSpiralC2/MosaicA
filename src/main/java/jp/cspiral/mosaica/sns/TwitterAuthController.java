@@ -33,8 +33,8 @@ public class TwitterAuthController {
 	public TwitterAuthController() {
 		ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setDebugEnabled(true)
-	 	  .setOAuthConsumerKey("")
-		  .setOAuthConsumerSecret("");
+	 	  .setOAuthConsumerKey("GhTiizSWeNcsFIlLsGlm64url")
+		  .setOAuthConsumerSecret("rdESnp71GYczKuQLKl3GEGjivRScbwktUs6onhWk5f7pS5IMJT");
 		conf = cb.build(); // 設定の生成
 	}
 
@@ -45,7 +45,7 @@ public class TwitterAuthController {
 	public String requestToken(HttpSession session, String imageId) {
 		try {
 			OAuthAuthorization oauth = new OAuthAuthorization(conf); // 設定をもとにoauthインスタンスを作成
-			String callbackURL = "http://52.69.136.65:8080/MosaicA/api/twitterUpdate"; // コールバック先
+			String callbackURL = "http://52.68.162.198:8080/MosaicA/api/twitterUpdate"; // コールバック先
 			RequestToken oAuthRequestToken = oauth
 					.getOAuthRequestToken(callbackURL); // callbackURLをリクエストトークンを付加
 			session.setAttribute("requestToken", oAuthRequestToken); // sessionにリクエストトークンを保存
