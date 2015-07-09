@@ -8,7 +8,6 @@ var result_original_height = 0; // 縦サイズ
 // 読み込み完了時処理
 $(function(){
 
-
   // スマホ表示
   var useragent = navigator.userAgent;
   if(useragent.indexOf('iPhone') > 0 || useragent.indexOf('iPod') > 0 ||
@@ -23,6 +22,10 @@ $(function(){
     $('head').append('<link rel="stylesheet" href="css/index.css"></link>');
   }
 
+  // 説明表示
+  $("#help").on('click', function(e){
+    $("#dialog").toggle();
+  });
   // プレースホルダ画像のdataUrl取得 TODO
   /*
   var source = $("#original_image")[0];
@@ -150,6 +153,11 @@ $(function(){
     if(key==null) key = "";
     if (confirm("画像を送信してもよろしいですか？")){
       $("#loading").attr('active', 'true');
+
+      // Notificationを取得
+      var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+      Notification.requestPermission(function(permission){;});
+
       // API呼び出し
       $.ajax({
         type: 'POST',
@@ -162,12 +170,17 @@ $(function(){
           key: key
         },
         success: function(tmp){
-          console.log("finish pushImage");
           imgId = tmp;
           console.log(imgId);
 
           $("#imageid")[0].value = imgId;
           getImage(imgId);
+
+          // デスクトップ通知
+          var notif = new Notification('MosaicA', {
+          	body: 'MosaicA has finished creating your mosaic art!!',
+          	icon: 'image/favicon.ico'
+          });
         }
       });
     }

@@ -12,7 +12,6 @@
 
 		<!-- js -->
 		<script src="js/bower_components/jQuery/dist/jquery.min.js"></script>
-
 		<script src="js/bower_components/webcomponentsjs/webcomponents.min.js"></script>
 
 		<script src="js/mosaica.js"></script>
@@ -27,18 +26,33 @@
 		<link rel="import" href="js/bower_components/paper-input/paper-input-container.html"></link>
 		<link rel="import" href="js/bower_components/paper-input/paper-input-error.html"></link>
 		<link rel="import" href="js/bower_components/paper-spinner/paper-spinner.html"></link>
+		<link rel="import" href="js/bower_components/paper-dialog/paper-dialog.html"></link>
+		<link rel="import" href="js/bower_components/paper-dialog-behavior/paper-dialog-behavior.html"></link>
+		<link rel="import" href="js/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html"></link>
 		<link rel="import" href="js/bower_components/iron-icons/iron-icons.html"></link>
 		<link rel="import" href="js/bower_components/iron-iconset/iron-iconset.html"></link>
 		<link rel="import" href="js/bower_components/iron-icons/social-icons.html"></link>
 		<link rel="import" href="js/bower_components/iron-image/iron-image.html"></link>
 
+
 	</head>
 	<body class="fullbleed unresolved">
+
 		<paper-header-panel class="flex">
 		    <paper-toolbar id="head">
 					<div class="title">MosaicA</div>
-					<paper-icon-button icon="help-outline"></paper-icon-button>
+					<paper-icon-button icon="help-outline" id="help"></paper-icon-button>
 				</paper-toolbar>
+
+			<paper-dialog id="dialog" role="dialog" class="layered flex">
+				<h2>Header</h2>
+					<paper-dialog-scrollable>
+						Lorem ipsum...
+					</paper-dialog-scrollable>
+					<div class="buttons">
+					<paper-button>OK</paper-button>
+					</div>
+			</paper-dialog>
 
 				<div id="left_div" class="horizontal layout">
 				<paper-material elevation="3" id="left">
