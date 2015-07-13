@@ -19,9 +19,11 @@ public class GoogleController {
 	public static final String USERAGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:32.0) Gecko/20100101 Firefox/32.0";
 
 	private static final String[] PROXY_LIST = {
-		"localhost"
+		"10.0.10.229", "localhost"
 			};
 	private static final String PROXY_PORT = "3128";
+	private static final String HTTPS_PORT = "443";
+	private long id;
 
 	private int indexOfProxyList = 0;
 
@@ -34,9 +36,11 @@ public class GoogleController {
 	 * プロキシの初期設定
 	 */
 	GoogleController() {
-		System.setProperty("http.proxyHost", PROXY_LIST[indexOfProxyList]);
-		System.setProperty("http.proxyPort", PROXY_PORT);
-		System.out.println("proxy: " + PROXY_LIST[indexOfProxyList]);
+//		System.setProperty("http.proxyHost", PROXY_LIST[indexOfProxyList]);
+//		System.setProperty("http.proxyPort", PROXY_PORT);
+//		System.setProperty("https.proxyHost", PROXY_LIST[indexOfProxyList]);
+//		System.setProperty("https.proxyPort", HTTPS_PORT);
+//		System.out.println(id + " / proxy: " + PROXY_LIST[indexOfProxyList]);
 	}
 
 	/**
@@ -101,9 +105,8 @@ public class GoogleController {
 			if("".equals(href)){
 				// ページをダンプ
 				dumpHtml(doc.html());
-				System.out.println("href is null url: " + doc.baseUri());
+				System.out.println("This html body is null url: " + doc.baseUri());
 				// もう一度トライ
-				// changeProxy();
 				doc = getDocument(searchUrl);
 				href = doc.select("#imagebox_bigimages > div > a").attr("href");
 			}
@@ -135,15 +138,14 @@ public class GoogleController {
 				// 連続アクセスするとGoogleに怒られて繋がらなくなるので，
 				// 500でエラーは起きなかった
 				try {
-					Thread.sleep(300);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO 自動生成された catch ブロック
 					e.printStackTrace();
 				}
 				return Jsoup.connect(url).userAgent(USERAGENT).get();
 			} catch (SocketTimeoutException e) {
 				// 何もせずにもう一度アクセス
-				System.out.println("timeout");
+				System.out.println("timeout, retry");
 			} catch (HttpStatusException e) {
 				if (e.getUrl().startsWith("http://ipv4.google.com/sorry/IndexRedirect?continue=")) {
 					// changeProxy();
@@ -152,7 +154,7 @@ public class GoogleController {
 					System.out.println("HttpStatusException code:" + e.getStatusCode() );//+ ", url:" + e.getUrl());
 				}
 				// Googleに怒られたらプロキシを変更
-				changeProxy();
+				//changeProxy();
 			} catch (IOException e) {
 				// TODO 自動生成された catch ブロック
 				e.printStackTrace();
@@ -190,6 +192,11 @@ public class GoogleController {
 	private void changeProxy() {
 		indexOfProxyList = (indexOfProxyList + 1) % PROXY_LIST.length;
 		System.setProperty("http.proxyHost", PROXY_LIST[indexOfProxyList]);
-		System.out.println("proxy: " + PROXY_LIST[indexOfProxyList]);
+		System.setProperty("https.proxyHost", PROXY_LIST[indexOfProxyList]);
+		System.out.println(id + " / proxy: " + PROXY_LIST[indexOfProxyList]);
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 }
