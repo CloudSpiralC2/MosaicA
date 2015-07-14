@@ -48,11 +48,12 @@ public class ProxyManager extends TimerTask {
 
 	/**
 	 * TimerTaskの開始
+	 * @param ms
 	 */
-	public void timerTaskStart(int s) {
-		if (s != 0) {
+	public void timerTaskStart(int ms) {
+		if (ms != 0) {
 			Timer t = new Timer();
-			t.schedule(this, s, s);
+			t.schedule(this, ms, ms);
 		}
 	}
 

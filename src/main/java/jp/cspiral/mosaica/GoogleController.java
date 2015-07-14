@@ -18,14 +18,7 @@ public class GoogleController {
 	// User-Agentを指定しないと変なページに飛ばされる
 	public static final String USERAGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:32.0) Gecko/20100101 Firefox/32.0";
 
-	private static final String[] PROXY_LIST = {
-		"10.0.10.229", "localhost"
-			};
-	private static final String PROXY_PORT = "3128";
-	private static final String HTTPS_PORT = "443";
 	private long id;
-
-	private int indexOfProxyList = 0;
 
 	// 連続アクセス回数
 	private static final int MAX_ACCESS_COUNT = 3;
@@ -36,11 +29,6 @@ public class GoogleController {
 	 * プロキシの初期設定
 	 */
 	GoogleController() {
-//		System.setProperty("http.proxyHost", PROXY_LIST[indexOfProxyList]);
-//		System.setProperty("http.proxyPort", PROXY_PORT);
-//		System.setProperty("https.proxyHost", PROXY_LIST[indexOfProxyList]);
-//		System.setProperty("https.proxyPort", HTTPS_PORT);
-//		System.out.println(id + " / proxy: " + PROXY_LIST[indexOfProxyList]);
 	}
 
 	/**
@@ -62,7 +50,6 @@ public class GoogleController {
 		String dirname = "/usr/share/tomcat7/webapps/images/";
 		String filename = new Date().getTime() + ".jpg";
 		File file = new File(dirname + filename);
-		// System.out.println(filename);
 		ImageIO.write(originalImage, "jpeg", file);
 		String url = "http://52.68.162.198:8080/images/" + filename;
 
@@ -95,7 +82,6 @@ public class GoogleController {
 		if (!keyword.equals("")) {
 			searchUrl += "&q=" + keyword;
 		}
-		// System.out.println("searchUrl: " + searchUrl);
 
 		// 検索ページから類似画像のリンクを取得
 		Document doc = getDocument(searchUrl);
@@ -105,23 +91,21 @@ public class GoogleController {
 			if("".equals(href)){
 				// ページをダンプ
 				dumpHtml(doc.html());
-				System.out.println("This html body is null url: " + doc.baseUri());
+//				System.out.println(id + " / This html body is null url: " + doc.baseUri());
 				// もう一度トライ
 				doc = getDocument(searchUrl);
 				href = doc.select("#imagebox_bigimages > div > a").attr("href");
 			}
 		} catch (NullPointerException e) {
 			// getDocumentがnullのとき
-			System.out.println("doc is null url: " + searchUrl);
+			System.out.println(id + " / Document is null, so this position is empty: " + searchUrl);
 			href = "";
 		}
 
 		searchUrl = "https://www.google.co.jp" + href;
-		// System.out.println("searchUrl: " + searchUrl);
 
 		// 類似画像のページから 1つ目のリンクのサムネイルを取得
 		doc = getDocument(searchUrl);
-		// System.out.println(page.select("a.rg_l img"));
 		return doc.select("a.rg_l img[data-src]").attr("data-src");
 	}
 
@@ -138,28 +122,26 @@ public class GoogleController {
 				// 連続アクセスするとGoogleに怒られて繋がらなくなるので，
 				// 500でエラーは起きなかった
 				try {
-					Thread.sleep(100);
+					Thread.sleep(200);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				return Jsoup.connect(url).userAgent(USERAGENT).get();
 			} catch (SocketTimeoutException e) {
 				// 何もせずにもう一度アクセス
-				System.out.println("timeout, retry");
+				System.out.println(id + " / Timeout, retry: " + i+1);
 			} catch (HttpStatusException e) {
 				if (e.getUrl().startsWith("http://ipv4.google.com/sorry/IndexRedirect?continue=")) {
-					// changeProxy();
-					System.out.println("Google angry: " + e.getUrl());
+					System.out.println(id + " / Google angry: " + e.getUrl());
 				} else {
-					System.out.println("HttpStatusException code:" + e.getStatusCode() );//+ ", url:" + e.getUrl());
+					System.out.println(id + " / HttpStatusException code:" + e.getStatusCode() );//+ ", url:" + e.getUrl());
 				}
-				// Googleに怒られたらプロキシを変更
-				//changeProxy();
 			} catch (IOException e) {
 				// TODO 自動生成された catch ブロック
 				e.printStackTrace();
 			}
 		}
+		System.out.println(id + " / Return null");
 		return null;
 	}
 
@@ -171,7 +153,7 @@ public class GoogleController {
 	 */
 	private void dumpHtml(String html) {
 		String filename = "/tmp/" + new Date().getTime() + ".html";
-		System.out.println("error: dumpfile " + filename);
+		System.out.println(id + " / Error: dumpfile " + filename);
 		File file = new File(filename);
 		FileWriter filewriter;
 		try {
@@ -182,18 +164,6 @@ public class GoogleController {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * proxyを変更
-	 *
-	 * @author tomita
-	 */
-	private void changeProxy() {
-		indexOfProxyList = (indexOfProxyList + 1) % PROXY_LIST.length;
-		System.setProperty("http.proxyHost", PROXY_LIST[indexOfProxyList]);
-		System.setProperty("https.proxyHost", PROXY_LIST[indexOfProxyList]);
-		System.out.println(id + " / proxy: " + PROXY_LIST[indexOfProxyList]);
 	}
 
 	public void setId(long id) {

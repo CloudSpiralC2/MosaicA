@@ -75,6 +75,10 @@ public class ImageController {
 		// 時間測定 開始時間
 		long start = System.currentTimeMillis();
 
+		// スレッド判定用のIDをつける
+		long id = new Date().getTime();
+		googleController.setId(id);
+
 		try {
 			String status = new String("processing");
 
@@ -117,6 +121,11 @@ public class ImageController {
 
 			System.out.println("before stream process");
 
+			// ProxyManger起動
+			ProxyManager pm = new ProxyManager();
+			pm.timerTaskStart(30000); // 30s
+			pm.setId(id);
+
 			// splitedImagesのstreamの各要素に対する類似画像検索の結果(ChildImage)でstreamを作成する
 			Stream<ChildImage> ciStream = stream.parallel().map(
 					splitedImage -> {
@@ -140,7 +149,7 @@ public class ImageController {
 						child.setY((position / divX) % divY);
 						child.setX(position % divX);
 
-						System.out.println("Current Position:"
+						System.out.println(id + " / Current Position:"
 								+ (position / divX) % divY + ","
 								+ (position % divX));
 
@@ -156,6 +165,7 @@ public class ImageController {
 			// streamを閉じる
 			ciStream.close();
 			stream.close();
+			pm.timerTaskStop();
 
 			// ArrayList -> 配列
 			children = (ChildImage[]) childrenlist.toArray(new ChildImage[0]);
@@ -177,32 +187,53 @@ public class ImageController {
 			query.put("sizeX", sizeX);
 			query.put("sizeY", sizeY);
 			query.put("status", "done");
-			// ---- <child>
-			for (int i = 0; i < divX * divY; i++) {
-				DBObject childQuery = new BasicDBObject();
-				childQuery.put("src", children[i].getSrc());
-				childQuery.put("x", children[i].getX());
-				childQuery.put("y", children[i].getY());
-				childQuery.put("url", children[i].getUrl());
 
-				String key = "child" + Integer.toString(i);
-				childrenQuery.put(key, childQuery);
+			int divXY = divX * divY;
+
+			// 分割数が6400(80*80)より上ならsrcを保存しない
+			// mongoのone document上限16MBを越える場合がある
+			// 2500(50*50)で4MB弱
+
+			if(divXY > 6400){
+				for (int i = 0; i < divX * divY; i++) {
+					DBObject childQuery = new BasicDBObject();
+					childQuery.put("src", "");
+					childQuery.put("x", children[i].getX());
+					childQuery.put("y", children[i].getY());
+					childQuery.put("url", children[i].getUrl());
+
+					String key = "child" + Integer.toString(i);
+					childrenQuery.put(key, childQuery);
+				}
 			}
-			// -- <children>
+			else{
+				for (int i = 0; i < divX * divY; i++) {
+					DBObject childQuery = new BasicDBObject();
+					childQuery.put("src", children[i].getSrc());
+					childQuery.put("x", children[i].getX());
+					childQuery.put("y", children[i].getY());
+					childQuery.put("url", children[i].getUrl());
+
+					String key = "child" + Integer.toString(i);
+					childrenQuery.put(key, childQuery);
+				}
+			}
+
+			// <children>をparentImageのqueryに追加
 			query.put("children", childrenQuery);
 
 			// DBに保存
 			coll.insert(query);
-
-			// 時間測定 終了時間
-			long end = System.currentTimeMillis();
-			System.out.println("変換時間" + (end - start) + "ms");
 
 			return parentImage.getImageId();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		} finally {
+			// 時間測定 終了時間
+			long end = System.currentTimeMillis();
+			System.out.println("変換時間" + (end - start) + "ms");
 		}
 	}
 
@@ -447,7 +478,7 @@ public class ImageController {
 
 		IntStream yStream = IntStream.range(0, divY).parallel();
 
-		yStream.forEach(i ->{
+		yStream.forEach(i -> {
 			IntStream xStream = IntStream.range(0, divX).parallel();
 			xStream.forEach(j -> {
 				DBObject child = (DBObject) children.get("child"
