@@ -12,14 +12,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Map;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
+import jp.cspiral.mosaica.util.MosaicALogger;
 import jp.cspiral.mosaica.util.DBUtils;
 
 import org.glassfish.jersey.internal.util.Base64;
@@ -51,10 +53,6 @@ public class ImageController {
 	 */
 	private final String DB_COLLECTION = "image";
 	/**
-	 * Loggerオブジェクト
-	 */
-	private Logger logger;
-	/**
 	 * DBオブジェクト
 	 */
 	private DB db;
@@ -75,9 +73,12 @@ public class ImageController {
 		// 時間測定 開始時間
 		long start = System.currentTimeMillis();
 
-		// スレッド判定用のIDをつける
+		// モザイクアート画像ID コンソール吐き用にも使用する
 		long id = new Date().getTime();
 		googleController.setId(id);
+
+		// ロギング用Map
+		Map<String, Object> data = new HashMap<String, Object>();
 
 		try {
 			String status = new String("processing");
@@ -88,16 +89,21 @@ public class ImageController {
 
 			// 元画像をデコード
 			image = decode(img);
+			int width = image.getWidth();
+			int height = image.getHeight();
 
 			// 元画像の情報をparentImageに入れる
-			// parentImage.setImageId("test4");
-			parentImage.setImageId(new Date().getTime() + "");
+			parentImage.setImageId(String.valueOf(id));
 			parentImage.setSrc(img);
 			parentImage.setDivX(xxx);
 			parentImage.setDivY(yyy);
-			parentImage.setSizeX(image.getWidth());
-			parentImage.setSizeY(image.getHeight());
+			parentImage.setSizeX(width);
+			parentImage.setSizeY(height);
 			parentImage.setStatus(status);
+
+			// for log
+			data.put("width", width);
+			data.put("height", height);
 
 			// 分割
 			BufferedImage[] splitedImages = splitImage();
@@ -107,8 +113,8 @@ public class ImageController {
 			int divY = parentImage.getDivY();
 			int sizeX = parentImage.getSizeX();
 			int sizeY = parentImage.getSizeY();
-			int width = (int) Math.ceil(sizeX / divX);
-			int height = (int) Math.ceil(sizeY / divY);
+//			int width = (int) Math.ceil(sizeX / divX);
+//			int height = (int) Math.ceil(sizeY / divY);
 			ChildImage[] children = new ChildImage[divX * divY];
 
 			// 処理位置位置初期化
@@ -118,8 +124,6 @@ public class ImageController {
 
 			// splitedImagesを配列に変換し，そのストリームを作成する
 			Stream<BufferedImage> stream = Arrays.stream(splitedImages);
-
-			System.out.println("before stream process");
 
 			// ProxyManger起動
 			ProxyManager pm = new ProxyManager();
@@ -233,7 +237,19 @@ public class ImageController {
 		} finally {
 			// 時間測定 終了時間
 			long end = System.currentTimeMillis();
-			System.out.println("変換時間" + (end - start) + "ms");
+			long time = end - start;
+			System.out.println("変換時間" + time + "ms");
+
+			// ロギング
+			data.put("imageid", String.valueOf(id));
+			data.put("image_str_length", img.length());
+			data.put("keyword", keyword);
+			data.put("divX", userDivX);
+			data.put("divY", userDivY);
+			data.put("process_time", time);
+
+			MosaicALogger.getInstance().getLogger().log("info", data);
+
 		}
 	}
 

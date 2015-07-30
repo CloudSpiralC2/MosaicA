@@ -40,7 +40,6 @@ public class MosaicA {
 			@FormParam("divx") final int divx, @FormParam("divy") final int divy)
 			throws InterruptedException {
 		String imageId;
-		// System.out.println("img: " + img);
 		try {
 			imageId = controller.createParentImage(img, key, divx, divy);
 			return Response.status(200).entity(imageId).build();
@@ -87,7 +86,6 @@ public class MosaicA {
 		try {
 			uri = new URI(authURL);
 			return Response.seeOther(uri).build();
-//			return Response.ok().entity(authURL).build();
 		} catch (URISyntaxException e) {
 			return Response.status(200).entity(e.toString()).build();
 		}
