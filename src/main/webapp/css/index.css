@@ -1,0 +1,103 @@
+html, body {
+	height: 100%;
+}
+
+body {
+	font-family: Roboto, 'Noto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	background-color: #ecf0f1;
+  -webkit-overflow-scrolling: touch;
+}
+
+paper-scroll-header-panel{
+	height: 100%;
+}
+
+.title {
+	font-size: 36px;
+}
+
+.green {
+	background-color: green !important;
+}
+
+.red {
+	background-color: red !important;
+}
+
+.image {
+//background-color: lightgray !important;
+	margin-top: 5px;
+	height: 500px;
+	width: 100%;
+}
+#head{
+	background-color: rgba(54,77,73,1);
+}
+
+#left {
+	background-color: #FAFAFA;
+	margin-top: 30px;
+	margin-left: 3%;
+	width: 45%;
+	height: 100%;
+}
+
+#right {
+	background-color: #FAFAFA;
+	margin-top: 30px;
+	/*margin-left: 52%;*/
+	width: 45%;
+}
+
+#mosaic_button_box {
+	width: 4%;
+}
+
+#mosaic_button {
+
+}
+
+paper-button.center_button {
+	background-color: green;
+	color: white;
+	margin-bottom: 10px;
+	margin-left: 40%;
+}
+
+#getimage{
+	background-color: green;
+	color: white;
+}
+
+paper-button.result_button {
+	background-color: #2abb9b;
+	color: white;
+}
+
+#original_image_box{
+
+}
+
+#result_image_box{
+	margin-top: 5px;
+	text-align: center;
+	line-height: 0px;
+}
+
+.params {
+	margin-left: 10%;
+	margin-right: 10%;
+}
+
+input[type="file"]{
+	display: none;
+}
+
+img.mosaic {
+	-webkit-transition: all 0.2s;
+	transition: all 0.2s;
+}
+img.mosaic:active{
+	-webkit-transform: scale(10);
+	transform: scale(10);
+}
