@@ -129,7 +129,7 @@ public class GoogleController {
 				return Jsoup.connect(url).userAgent(USERAGENT).get();
 			} catch (SocketTimeoutException e) {
 				// 何もせずにもう一度アクセス
-				System.out.println(id + " / Timeout, retry: " + i+1);
+				System.out.println(id + " / Timeout, retry: " + i);
 			} catch (HttpStatusException e) {
 				if (e.getUrl().startsWith("http://ipv4.google.com/sorry/IndexRedirect?continue=")) {
 					System.out.println(id + " / Google angry: " + e.getUrl());

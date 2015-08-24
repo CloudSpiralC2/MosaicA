@@ -194,11 +194,11 @@ public class ImageController {
 
 			int divXY = divX * divY;
 
-			// 分割数が6400(80*80)より上ならsrcを保存しない
+			// 分割数が4900(70*70)より上ならsrcを保存しない
 			// mongoのone document上限16MBを越える場合がある
 			// 2500(50*50)で4MB弱
 
-			if(divXY > 6400){
+			if(divXY >= 4900){
 				for (int i = 0; i < divX * divY; i++) {
 					DBObject childQuery = new BasicDBObject();
 					childQuery.put("src", "");
