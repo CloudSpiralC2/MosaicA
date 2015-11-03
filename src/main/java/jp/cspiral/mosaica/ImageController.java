@@ -77,8 +77,6 @@ public class ImageController {
 		long id = new Date().getTime();
 		googleController.setId(id);
 
-
-
 		try {
 			String status = new String("processing");
 
@@ -121,8 +119,8 @@ public class ImageController {
 			int divY = parentImage.getDivY();
 			int sizeX = parentImage.getSizeX();
 			int sizeY = parentImage.getSizeY();
-//			int width = (int) Math.ceil(sizeX / divX);
-//			int height = (int) Math.ceil(sizeY / divY);
+			// int width = (int) Math.ceil(sizeX / divX);
+			// int height = (int) Math.ceil(sizeY / divY);
 			ChildImage[] children = new ChildImage[divX * divY];
 
 			// 処理位置位置初期化
@@ -206,7 +204,7 @@ public class ImageController {
 			// mongoのone document上限16MBを越える場合がある
 			// 2500(50*50)で4MB弱
 
-			if(divXY >= 4900){
+			if (divXY >= 4900) {
 				for (int i = 0; i < divX * divY; i++) {
 					DBObject childQuery = new BasicDBObject();
 					childQuery.put("src", "");
@@ -217,8 +215,7 @@ public class ImageController {
 					String key = "child" + Integer.toString(i);
 					childrenQuery.put(key, childQuery);
 				}
-			}
-			else{
+			} else {
 				for (int i = 0; i < divX * divY; i++) {
 					DBObject childQuery = new BasicDBObject();
 					childQuery.put("src", children[i].getSrc());
@@ -406,12 +403,12 @@ public class ImageController {
 	 * @author niki
 	 */
 	public ParentImage getImage(String imageId) throws MongoException {
+
 		// ロギング用Map
 		Map<String, Object> log = new HashMap<String, Object>();
 		log.put("API", "getImage");
 		log.put("imageid", imageId);
 		MosaicALogger.getInstance().getLogger().log("info", log);
-
 		ParentImage pImage = new ParentImage();
 
 		pImage.setImageId(imageId);
@@ -447,6 +444,16 @@ public class ImageController {
 				cImage.setY((int) child.get("y"));
 
 				childImage[i] = cImage;
+
+				// tmp
+				try {
+					System.out.println(cImage.getX() + "," + cImage.getY() + ": " + isMonoColor(cImage.getSrc()));
+				} catch (IOException e) {
+					// TODO 自動生成された catch ブロック
+					e.printStackTrace();
+				}
+				// tmp
+
 			}
 
 			pImage.setChildren(childImage);
@@ -569,5 +576,57 @@ public class ImageController {
 		yStream.close();
 
 		return this.encode(MergedImage);
+	}
+
+	/**
+	 * @author hayata
+	 * @param image
+	 * @return
+	 * @throws IOException
+	 * @throws MongoException
+	 */
+	public boolean isMonoColor(String mime) throws IOException{
+		boolean flag = false;
+		int split = 4;
+		int num = split * split * split; // 256
+		// イメージの取得
+//		BufferedImage image = new BufferedImage(width, // 生成する画像の横サイズ
+//				height, // 生成する画像の縦サイズ
+//				BufferedImage.TYPE_INT_RGB); // イメージタイプ(RGB:int)
+		BufferedImage image = this.decode(mime);
+		int width = image.getWidth();
+		int height = image.getHeight();
+
+
+		// カラーヒストグラムの初期化
+		int[] histogram = new int[num];
+		for (int i = 0; i < num; i++)
+			histogram[i] = 0;
+
+		// カラーヒストグラムの作成
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				// RGB値の取得
+				int color = image.getRGB(x, y); // alpha red green blue
+												// が8bitずつ並んでいる
+				int r = color >> 16 & 0xff; // xxxxxxxx rrrrrrrr & 00000000 11111111
+				int g = color >> 8 & 0xff;
+				int b = color & 0xff;
+				// ヒストグラム用インデックスの作成
+				int index = split * split * (r / num) + split * (g / num)
+						+ (b / num);
+
+				histogram[index] += 1;
+			}
+		}
+
+		// ヒストグラムの評価（単色かどうか）
+		for (int i = 0; i < num; i++) {
+			if (histogram[i] > width * height * 0.95) {
+				flag = true;
+				break;
+			}
+		}
+		return flag;
 	}
 }
