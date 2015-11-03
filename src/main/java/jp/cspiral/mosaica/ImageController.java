@@ -21,8 +21,8 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
-import jp.cspiral.mosaica.util.MosaicALogger;
 import jp.cspiral.mosaica.util.DBUtils;
+import jp.cspiral.mosaica.util.MosaicALogger;
 
 import org.glassfish.jersey.internal.util.Base64;
 
@@ -390,6 +390,9 @@ public class ImageController {
 		ImageIO.write(inputImage, "jpg", file);
 
 		BufferedImage image = ImageIO.read(file);
+
+		// 消す
+		file.delete();
 
 		return image;
 	}
