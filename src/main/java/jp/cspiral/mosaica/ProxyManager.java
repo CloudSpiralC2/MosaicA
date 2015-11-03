@@ -15,8 +15,8 @@ public class ProxyManager extends TimerTask {
 
 	private static final String[] PROXY_LIST = { "localhost",
 		"10.0.10.229",
-		"10.0.10.120",
-		"10.0.10.75",
+//		"10.0.10.120",
+//		"10.0.10.75",
 		"10.0.10.113",
 		"10.0.10.114"
 		};

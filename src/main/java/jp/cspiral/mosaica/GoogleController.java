@@ -7,8 +7,12 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
+
+import jp.cspiral.mosaica.util.MosaicALogger;
 
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -88,18 +92,28 @@ public class GoogleController {
 		String href;
 		try {
 			href = doc.select("#imagebox_bigimages > div > a").attr("href");
-			if("".equals(href)){
+			if ("".equals(href)) {
 				// ページをダンプ
 				dumpHtml(doc.html());
-//				System.out.println(id + " / This html body is null url: " + doc.baseUri());
+				// System.out.println(id + " / This html body is null url: " +
+				// doc.baseUri());
 				// もう一度トライ
 				doc = getDocument(searchUrl);
 				href = doc.select("#imagebox_bigimages > div > a").attr("href");
 			}
 		} catch (NullPointerException e) {
 			// getDocumentがnullのとき
-			System.out.println(id + " / Document is null, so this position is empty: " + searchUrl);
+			System.out.println(id
+					+ " / Document is null, so this position is empty: "
+					+ searchUrl);
 			href = "";
+			// ロギング用
+			Map<String, Object> log = new HashMap<String, Object>();
+			log.put("API", "pushImage");
+			log.put("url", originalImageUrl);
+			log.put("keyword", keyword);
+			log.put("message", "return image is empty");
+			MosaicALogger.getInstance().getLogger().log("warn", log);
 		}
 
 		searchUrl = "https://www.google.co.jp" + href;
@@ -117,6 +131,11 @@ public class GoogleController {
 	 * @author tomita
 	 */
 	private Document getDocument(String url) {
+		// ロギング用
+		Map<String, Object> log = new HashMap<String, Object>();
+		log.put("API", "pushImage");
+		log.put("url", url);
+
 		for (int i = 0; i < MAX_ACCESS_COUNT; i++) {
 			try {
 				// 連続アクセスするとGoogleに怒られて繋がらなくなるので，
@@ -131,10 +150,19 @@ public class GoogleController {
 				// 何もせずにもう一度アクセス
 				System.out.println(id + " / Timeout, retry: " + i);
 			} catch (HttpStatusException e) {
-				if (e.getUrl().startsWith("http://ipv4.google.com/sorry/IndexRedirect?continue=")) {
+				if (e.getUrl().startsWith(
+						"http://ipv4.google.com/sorry/IndexRedirect?continue=")) {
 					System.out.println(id + " / Google angry: " + e.getUrl());
+					log.put("try", i);
+					log.put("message", "google angry");
+					MosaicALogger.getInstance().getLogger().log("error", log);
 				} else {
-					System.out.println(id + " / HttpStatusException code:" + e.getStatusCode() );//+ ", url:" + e.getUrl());
+					System.out.println(id + " / HttpStatusException code:"
+							+ e.getStatusCode());// + ", url:" + e.getUrl());
+					log.put("try", i);
+					log.put("message",
+							"HttpStatusException: " + e.getStatusCode());
+					MosaicALogger.getInstance().getLogger().log("warn", log);
 				}
 			} catch (IOException e) {
 				// TODO 自動生成された catch ブロック

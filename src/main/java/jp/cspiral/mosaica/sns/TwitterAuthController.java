@@ -4,11 +4,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
 import jp.cspiral.mosaica.ImageController;
+import jp.cspiral.mosaica.util.MosaicALogger;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
@@ -94,6 +97,10 @@ public class TwitterAuthController {
 	 * @return
 	 */
 	public String uploadImage(AccessToken accessToken, String imageId) {
+		// ロギング用
+		Map<String, Object> log = new HashMap<String, Object>();
+		log.put("API", "twitterUpdate");
+		log.put("imageid", imageId);
 		try {
 			// twitterつぶやきready
 			TwitterFactory factory = new TwitterFactory(conf);
@@ -111,15 +118,22 @@ public class TwitterAuthController {
 			status.setMedia(imageId, is);
 			Status s = twitter.updateStatus(status);
 
+			MosaicALogger.getInstance().getLogger().log("info", log);
 			return "つぶやきました: " + s.getText();
 
 		} catch (TwitterException e) {
 			e.printStackTrace();
+			log.put("message", e.toString());
+			MosaicALogger.getInstance().getLogger().log("error", log);
 			return "Twitter Error: " + e.toString();
 		} catch(MongoException e) {
+			log.put("message", e.toString());
+			MosaicALogger.getInstance().getLogger().log("error", log);
 			return "Image not found.";
 		} catch (IOException e) {
 			e.printStackTrace();
+			log.put("message", e.toString());
+			MosaicALogger.getInstance().getLogger().log("error", log);
 			return "IO Exeption: " + e.toString();
 		}
 	}

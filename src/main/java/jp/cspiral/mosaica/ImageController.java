@@ -77,8 +77,7 @@ public class ImageController {
 		long id = new Date().getTime();
 		googleController.setId(id);
 
-		// ロギング用Map
-		Map<String, Object> data = new HashMap<String, Object>();
+
 
 		try {
 			String status = new String("processing");
@@ -92,6 +91,19 @@ public class ImageController {
 			int width = image.getWidth();
 			int height = image.getHeight();
 
+			// 処理開始のロギング
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("API", "pushImage");
+			data.put("status", "START");
+			data.put("width", width);
+			data.put("height", height);
+			data.put("imageid", String.valueOf(id));
+			data.put("image_str_length", img.length());
+			data.put("keyword", keyword);
+			data.put("divX", userDivX);
+			data.put("divY", userDivY);
+			MosaicALogger.getInstance().getLogger().log("info", data);
+
 			// 元画像の情報をparentImageに入れる
 			parentImage.setImageId(String.valueOf(id));
 			parentImage.setSrc(img);
@@ -100,10 +112,6 @@ public class ImageController {
 			parentImage.setSizeX(width);
 			parentImage.setSizeY(height);
 			parentImage.setStatus(status);
-
-			// for log
-			data.put("width", width);
-			data.put("height", height);
 
 			// 分割
 			BufferedImage[] splitedImages = splitImage();
@@ -233,6 +241,10 @@ public class ImageController {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			Map<String, Object> log = new HashMap<String, Object>();
+			log.put("API", "pushImage");
+			log.put("message", e.toString());
+			MosaicALogger.getInstance().getLogger().log("error", log);
 			return null;
 		} finally {
 			// 時間測定 終了時間
@@ -240,16 +252,13 @@ public class ImageController {
 			long time = end - start;
 			System.out.println("変換時間" + time + "ms");
 
-			// ロギング
+			// 処理終了のロギング
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("API", "pushImage");
+			data.put("status", "END");
 			data.put("imageid", String.valueOf(id));
-			data.put("image_str_length", img.length());
-			data.put("keyword", keyword);
-			data.put("divX", userDivX);
-			data.put("divY", userDivY);
 			data.put("process_time", time);
-
 			MosaicALogger.getInstance().getLogger().log("info", data);
-
 		}
 	}
 
@@ -397,6 +406,12 @@ public class ImageController {
 	 * @author niki
 	 */
 	public ParentImage getImage(String imageId) throws MongoException {
+		// ロギング用Map
+		Map<String, Object> log = new HashMap<String, Object>();
+		log.put("API", "getImage");
+		log.put("imageid", imageId);
+		MosaicALogger.getInstance().getLogger().log("info", log);
+
 		ParentImage pImage = new ParentImage();
 
 		pImage.setImageId(imageId);
@@ -447,6 +462,11 @@ public class ImageController {
 	 * @author niki
 	 */
 	public String getImageIdList() throws MongoException {
+		// ロギング用Map
+		Map<String, Object> log = new HashMap<String, Object>();
+		log.put("API", "getImageIdList");
+		MosaicALogger.getInstance().getLogger().log("info", log);
+
 		db = DBUtils.getInstance().getDb();
 		coll = db.getCollection(DB_COLLECTION);
 
@@ -472,6 +492,12 @@ public class ImageController {
 	 * @author niki
 	 */
 	public String saveImage(String imageId) throws MongoException {
+		// ロギング用Map
+		Map<String, Object> log = new HashMap<String, Object>();
+		log.put("API", "saveImage");
+		log.put("imageid", imageId);
+		MosaicALogger.getInstance().getLogger().log("info", log);
+
 		db = DBUtils.getInstance().getDb();
 		coll = db.getCollection(DB_COLLECTION);
 
