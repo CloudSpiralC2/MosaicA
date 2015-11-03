@@ -384,14 +384,14 @@ public class ImageController {
 		String dirname = "/usr/share/tomcat7/webapps/images/";
 		String filename = new Date().getTime() + "_preParentImage.jpg";
 		File file = new File(dirname + filename);
-		System.out.println(filename);
+		//System.out.println(filename);
 
 		BufferedImage inputImage = ImageIO.read(input);
 		ImageIO.write(inputImage, "jpg", file);
 
 		BufferedImage image = ImageIO.read(file);
 
-		// 消す
+		// 生成ファイルを消す
 		file.delete();
 
 		return image;
@@ -450,7 +450,9 @@ public class ImageController {
 
 				// tmp
 				try {
-					System.out.println(cImage.getX() + "," + cImage.getY() + ": " + isMonoColor(cImage.getSrc()));
+					if(isMonoColor(cImage.getSrc())){
+					System.out.println(cImage.getX() + "," + cImage.getY());
+					}
 				} catch (IOException e) {
 					// TODO 自動生成された catch ブロック
 					e.printStackTrace();
@@ -591,7 +593,7 @@ public class ImageController {
 	public boolean isMonoColor(String mime) throws IOException{
 		boolean flag = false;
 		int split = 4;
-		int num = split * split * split; // 256
+		int num = split * split * split; // 64
 		// イメージの取得
 //		BufferedImage image = new BufferedImage(width, // 生成する画像の横サイズ
 //				height, // 生成する画像の縦サイズ
@@ -599,7 +601,6 @@ public class ImageController {
 		BufferedImage image = this.decode(mime);
 		int width = image.getWidth();
 		int height = image.getHeight();
-
 
 		// カラーヒストグラムの初期化
 		int[] histogram = new int[num];
@@ -625,7 +626,7 @@ public class ImageController {
 
 		// ヒストグラムの評価（単色かどうか）
 		for (int i = 0; i < num; i++) {
-			if (histogram[i] > width * height * 0.95) {
+			if (histogram[i] > width * height * 0.98) {
 				flag = true;
 				break;
 			}
